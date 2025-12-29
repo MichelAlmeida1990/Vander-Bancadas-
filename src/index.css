@@ -171,3 +171,47 @@ button {
   opacity: 1;
   transform: translateX(0);
 }
+
+/* Desabilita hover em dispositivos móveis/touch */
+@media (hover: none) and (pointer: coarse) {
+  *:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
+    background: inherit !important;
+    color: inherit !important;
+    border-color: inherit !important;
+    opacity: inherit !important;
+    filter: inherit !important;
+  }
+  
+  *:hover::before,
+  *:hover::after {
+    opacity: inherit !important;
+    transform: inherit !important;
+    background: inherit !important;
+    width: inherit !important;
+    height: inherit !important;
+  }
+}
+
+/* Desabilita hover em telas pequenas (mobile) */
+@media (max-width: 768px) {
+  *:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
+    background: inherit !important;
+    color: inherit !important;
+    border-color: inherit !important;
+    opacity: inherit !important;
+    filter: inherit !important;
+  }
+  
+  *:hover::before,
+  *:hover::after {
+    opacity: inherit !important;
+    transform: inherit !important;
+    background: inherit !important;
+    width: inherit !important;
+    height: inherit !important;
+  }
+}
