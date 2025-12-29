@@ -1,0 +1,285 @@
+.page-hero {
+  padding: 8rem 0 5rem;
+  background: var(--background-alt);
+  color: var(--text);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/gallery/bancada-porcelanato-015.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.05;
+  z-index: 1;
+}
+
+.page-hero > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.page-hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text);
+}
+
+.page-hero p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.contact-content {
+  padding: 5rem 0;
+  background-color: var(--background);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.contact-form-wrapper h2,
+.contact-info h2,
+.contact-form h3 {
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.contact-form {
+  background: var(--dark);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.3s ease;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-form:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border-color: rgba(212, 165, 116, 0.3);
+}
+
+.form-group {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+  border-color: rgba(229, 187, 72, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--gold-shadow);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.contact-info {
+  background: var(--dark);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary-gold-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px var(--gold-shadow);
+}
+
+.contact-info:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border-color: rgba(229, 187, 72, 0.4);
+}
+
+.contact-info:hover::before {
+  transform: scaleX(1);
+}
+
+.info-item {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: padding-left 0.3s ease;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.info-item:hover {
+  padding-left: 0.5rem;
+}
+
+.info-item strong {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.info-item a {
+  background: var(--primary-gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-block;
+  position: relative;
+  filter: drop-shadow(0 1px 2px var(--gold-shadow));
+}
+
+.info-item a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-gold-gradient);
+  transition: width 0.3s ease;
+  box-shadow: 0 2px 4px var(--gold-shadow);
+}
+
+.info-item a:hover::after {
+  width: 100%;
+}
+
+.info-item a:hover {
+  filter: drop-shadow(0 2px 6px var(--gold-shadow-strong));
+}
+
+.info-item p {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.quick-actions {
+  margin-top: 2rem;
+}
+
+.btn-outline {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-gold-gradient);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.btn-outline:hover {
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--gold-shadow);
+}
+
+.btn-outline:hover::before {
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
