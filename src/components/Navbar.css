@@ -142,6 +142,11 @@
   display: none;
 }
 
+/* Desktop: Hide close button */
+.menu-close-wrapper {
+  display: none;
+}
+
 .menu-list {
   display: flex;
   list-style: none;
