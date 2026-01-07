@@ -37,12 +37,12 @@
   font-size: 1.75rem;
   font-weight: 700;
   font-style: italic;
-  color: white;
+  color: black;
   letter-spacing: 1px;
   z-index: 1002;
   position: relative;
   transition: all 0.3s ease;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   height: 50px;
@@ -69,7 +69,7 @@
 .logo-text-fallback {
   display: inline;
   font-style: italic;
-  color: #000000;
+  color: black;
   font-weight: 900;
   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
   transition: color 0.3s ease, text-shadow 0.3s ease;
@@ -166,7 +166,7 @@
 }
 
 .menu-list a {
-  color: white;
+  color: black;
   font-weight: 500;
   font-size: 0.95rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -175,7 +175,7 @@
   text-decoration: none;
   position: relative;
   display: inline-block;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
 .navbar.scrolled .menu-list a {

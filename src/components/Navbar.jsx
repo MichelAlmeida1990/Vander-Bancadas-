@@ -3,11 +3,12 @@ import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 const navItems = [
-  { path: '/#inicio', label: 'Início', hash: '#inicio' },
-  { path: '/#sobre', label: 'Sobre', hash: '#sobre' },
-  { path: '/#servicos', label: 'Serviços', hash: '#servicos' },
-  { path: '/#galeria', label: 'Galeria', hash: '#galeria' },
-  { path: '/#contato', label: 'Contato', hash: '#contato' },
+  { path: '/', label: 'Início', hash: '#inicio' },
+  { path: '/sobre', label: 'Sobre', hash: '#sobre' },
+  { path: '/servicos', label: 'Serviços', hash: '#servicos' },
+  { path: '/galeria', label: 'Galeria', hash: '#galeria' },
+  { path: '/contato', label: 'Contato', hash: '#contato' },
+  { path: '/admin', label: 'Admin', hash: '' },
 ]
 
 function Navbar() {
@@ -88,7 +89,7 @@ function Navbar() {
       <div className="container">
         <div className="navbar-content">
           <Link 
-            to="/#inicio" 
+            to="/" 
             className="navbar-logo" 
             onClick={(e) => handleLinkClick(e, '#inicio')}
           >

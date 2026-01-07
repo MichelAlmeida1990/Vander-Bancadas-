@@ -1,9 +1,8 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import './styles/variables.css';
+@import './styles/base.css';
+@import './styles/accessibility.css';
 
+/* Existing Vander Bancadas brand colors - preserved for compatibility */
 :root {
   /* Cores com dourado elegante */
   --primary: #D4A574;

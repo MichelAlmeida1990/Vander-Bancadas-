@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import ImageModal from '../components/ImageModal'
+import SEO from '../components/SEO'
+import { validateForm, sanitizeInput, formatPhone } from '../utils/validation'
 import './Home.css'
+import '../components/FormValidation.css'
 
 function Home() {
   const [formData, setFormData] = useState({
@@ -12,6 +15,8 @@ function Home() {
   const [modalImage, setModalImage] = useState(null)
   const [modalIndex, setModalIndex] = useState(-1)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [formErrors, setFormErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Todas as imagens disponíveis (incluindo as novas imagens)
   const allImages = Array.from({ length: 25 }, (_, i) => ({
@@ -35,6 +40,11 @@ function Home() {
   const openModal = (index) => {
     setModalIndex(index)
     setModalImage(allImages[index])
+    
+    // Track gallery view
+    if (window.trackAnalytics) {
+      window.trackAnalytics.galleryView(index)
+    }
   }
 
   const closeModal = () => {
@@ -77,21 +87,119 @@ function Home() {
   }, [])
 
   const handleFormChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    
+    // Formatar telefone
+    if (name === 'phone') {
+      const formattedPhone = formatPhone(value)
+      setFormData({
+        ...formData,
+        [name]: formattedPhone
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: sanitizeInput(value)
+      })
+    }
+    
+    // Limpar erro do campo quando usuário começa a digitar
+    if (formErrors[name]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: ''
+      })
+    }
   }
 
   const handleFormSubmit = (e) => {
     e.preventDefault()
-    const whatsappMessage = `Olá! Meu nome é ${formData.name}. ${formData.message} Telefone: ${formData.phone}`
-    const whatsappUrl = `https://wa.me/5511971678867?text=${encodeURIComponent(whatsappMessage)}`
-    window.open(whatsappUrl, '_blank')
+    
+    // Track form submission attempt
+    if (window.trackAnalytics) {
+      window.trackAnalytics.formSubmission('contact')
+    }
+    
+    // Validar formulário
+    const validation = validateForm(formData, 'contact')
+    
+    if (!validation.isValid) {
+      setFormErrors(validation.errors)
+      return
+    }
+    
+    setIsSubmitting(true)
+    
+    try {
+      const whatsappMessage = `Olá! Meu nome é ${formData.name}. ${formData.message} Telefone: ${formData.phone}`
+      const whatsappUrl = `https://wa.me/5511971678867?text=${encodeURIComponent(whatsappMessage)}`
+      
+      // Track WhatsApp click
+      if (window.trackAnalytics) {
+        window.trackAnalytics.whatsappClick()
+      }
+      
+      window.open(whatsappUrl, '_blank')
+      
+      // Track successful lead
+      if (window.trackAnalytics) {
+        window.trackAnalytics.lead({
+          type: 'contact_form',
+          method: 'whatsapp'
+        })
+      }
+      
+      // Limpar formulário após envio
+      setFormData({
+        name: '',
+        phone: '',
+        message: ''
+      })
+      setFormErrors({})
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error)
+      setFormErrors({
+        submit: 'Erro ao enviar mensagem. Tente novamente.'
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div>
+      <SEO 
+        title="Soluções Premium em Porcelanato"
+        description="Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional na Grande São Paulo. Mais de 1.000 projetos entregues com qualidade premium."
+        keywords="bancadas porcelanato, cubas esculpidas, limpeza quartzo, granito, mármore, São Paulo"
+        canonicalUrl="https://vanderbancadas.com.br"
+        ogImage="/gallery/bancada-porcelanato-001.jpg"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "Vander Bancadas",
+          "description": "Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional na Grande São Paulo",
+          "url": "https://vanderbancadas.com.br",
+          "telephone": "+55-11-97167-8867",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-23.5505",
+            "longitude": "-46.6333"
+          },
+          "serviceType": "Bancadas de Porcelanato, Cubas Esculpidas, Limpeza de Pedras",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "150"
+          }
+        }}
+      />
       <section className="hero" id="inicio">
         <div className="hero-carousel">
           {featuredImages.map((imageIndex, idx) => (
@@ -273,7 +381,15 @@ function Home() {
                     value={formData.name}
                     onChange={handleFormChange}
                     required 
+                    className={formErrors.name ? 'error' : ''}
+                    aria-invalid={formErrors.name ? 'true' : 'false'}
+                    aria-describedby={formErrors.name ? 'name-error' : undefined}
                   />
+                  {formErrors.name && (
+                    <span id="name-error" className="error-message" role="alert">
+                      {formErrors.name}
+                    </span>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="phone">Telefone</label>
@@ -284,7 +400,16 @@ function Home() {
                     value={formData.phone}
                     onChange={handleFormChange}
                     required 
+                    className={formErrors.phone ? 'error' : ''}
+                    aria-invalid={formErrors.phone ? 'true' : 'false'}
+                    aria-describedby={formErrors.phone ? 'phone-error' : undefined}
+                    placeholder="(11) 91234-5678"
                   />
+                  {formErrors.phone && (
+                    <span id="phone-error" className="error-message" role="alert">
+                      {formErrors.phone}
+                    </span>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor="message">Mensagem</label>
@@ -295,9 +420,28 @@ function Home() {
                     value={formData.message}
                     onChange={handleFormChange}
                     required
+                    className={formErrors.message ? 'error' : ''}
+                    aria-invalid={formErrors.message ? 'true' : 'false'}
+                    aria-describedby={formErrors.message ? 'message-error' : undefined}
                   ></textarea>
+                  {formErrors.message && (
+                    <span id="message-error" className="error-message" role="alert">
+                      {formErrors.message}
+                    </span>
+                  )}
                 </div>
-                <button type="submit" className="btn btn-primary"><span>Enviar Mensagem</span></button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  disabled={isSubmitting}
+                >
+                  <span>{isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}</span>
+                </button>
+                {formErrors.submit && (
+                  <div className="error-message submit-error" role="alert">
+                    {formErrors.submit}
+                  </div>
+                )}
               </form>
             </div>
             <div className="contact-info scroll-reveal-right">
