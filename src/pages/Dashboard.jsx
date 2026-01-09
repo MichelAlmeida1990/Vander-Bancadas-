@@ -503,15 +503,6 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard Administrativo</h1>
-        <div className="header-actions">
-          <button className="notification-btn">
-            <AlertCircle size={20} />
-            <span className="badge">3</span>
-          </button>
-          <button className="settings-btn">
-            <Settings size={20} />
-          </button>
-        </div>
       </div>
 
       <div className="dashboard-tabs">
