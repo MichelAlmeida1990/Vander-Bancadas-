@@ -416,61 +416,397 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .projects-container {
     padding: var(--space-4);
+  }
+
+  .projects-header {
+    padding: var(--space-4);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .project-card {
+    border-radius: var(--radius-md);
+  }
+
+  .project-header {
+    padding: var(--space-4);
+  }
+
+  .project-phases {
+    padding: var(--space-4);
+  }
+
+  .phases-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .phase-card {
+    padding: var(--space-3);
+  }
+
+  .modal-content {
+    padding: var(--space-6);
+    margin: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .projects-container {
+    padding: var(--space-3);
   }
 
   .projects-header {
     flex-direction: column;
     gap: var(--space-4);
     text-align: center;
+    padding: var(--space-3);
+  }
+
+  .projects-header h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .header-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
   }
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .stat-card {
+    padding: var(--space-4);
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .stat-content h3 {
+    font-size: var(--text-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-lg);
+  }
+
+  .project-card {
+    border-radius: var(--radius-sm);
   }
 
   .project-header {
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-3);
     align-items: flex-start;
+    padding: var(--space-3);
+    cursor: default;
+  }
+
+  .project-info h3 {
+    font-size: var(--text-lg);
+  }
+
+  .project-meta {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .project-meta span {
+    font-size: var(--text-xs);
   }
 
   .project-financial {
     align-items: flex-start;
     min-width: 100%;
+    gap: var(--space-2);
   }
 
   .values {
     text-align: left;
   }
 
+  .values span {
+    font-size: var(--text-sm);
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+
+  .progress-text {
+    font-size: var(--text-xs);
+  }
+
+  .expand-icon {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+
+  .project-phases {
+    padding: var(--space-3);
+  }
+
+  .project-phases h4 {
+    font-size: var(--text-lg);
+  }
+
   .phases-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .phase-card {
+    padding: var(--space-3);
+  }
+
+  .phase-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .phase-header h5 {
+    font-size: var(--text-base);
+  }
+
+  .phase-description {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .phase-details {
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2);
+  }
+
+  .phase-details span {
+    font-size: var(--text-xs);
+  }
+
+  .phase-actions {
+    justify-content: flex-start;
+  }
+
+  .btn-complete {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  .completed-badge {
+    font-size: var(--text-xs);
+  }
+
+  .modal-overlay {
+    padding: var(--space-3);
+  }
+
+  .modal-content {
+    padding: var(--space-4);
+    margin: var(--space-3);
+    max-height: 90vh;
+  }
+
+  .modal-content h2 {
+    font-size: var(--text-xl);
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 
-  .modal-content {
-    padding: var(--space-6);
+  .form-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .form-group label {
+    font-size: var(--text-sm);
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .modal-actions button {
+    width: 100%;
+    padding: var(--space-3);
   }
 }
 
 @media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .projects-container {
+    padding: var(--space-2);
+  }
+
+  .projects-header {
+    padding: var(--space-2);
+  }
+
+  .projects-header h1 {
+    font-size: var(--text-xl);
   }
 
   .header-actions {
     flex-direction: column;
     width: 100%;
+    gap: var(--space-2);
   }
 
-  .btn-primary {
+  .btn-primary,
+  .btn-secondary {
     width: 100%;
     justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-3);
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-content h3 {
+    font-size: var(--text-xs);
+  }
+
+  .stat-value {
+    font-size: var(--text-base);
+  }
+
+  .project-header {
+    padding: var(--space-2);
+  }
+
+  .project-info h3 {
+    font-size: var(--text-base);
+  }
+
+  .project-meta span {
+    font-size: var(--text-xs);
+    padding: 2px var(--space-1);
+  }
+
+  .project-financial {
+    gap: var(--space-1);
+  }
+
+  .values span {
+    font-size: var(--text-xs);
+  }
+
+  .progress-bar {
+    height: 4px;
+  }
+
+  .progress-text {
+    font-size: var(--text-xs);
+  }
+
+  .expand-icon {
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .project-phases {
+    padding: var(--space-2);
+  }
+
+  .project-phases h4 {
+    font-size: var(--text-base);
+  }
+
+  .phases-grid {
+    gap: var(--space-2);
+  }
+
+  .phase-card {
+    padding: var(--space-2);
+  }
+
+  .phase-header h5 {
+    font-size: var(--text-sm);
+  }
+
+  .percentage {
+    font-size: var(--text-xs);
+  }
+
+  .phase-description {
+    font-size: var(--text-xs);
+  }
+
+  .phase-details span {
+    font-size: var(--text-xs);
+  }
+
+  .btn-complete {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .modal-overlay {
+    padding: var(--space-2);
+  }
+
+  .modal-content {
+    padding: var(--space-3);
+    margin: var(--space-2);
+    max-height: 95vh;
+  }
+
+  .modal-content h2 {
+    font-size: var(--text-lg);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-2);
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .modal-actions button {
+    padding: var(--space-2);
+    font-size: var(--text-sm);
   }
 }
