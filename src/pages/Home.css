@@ -1107,9 +1107,25 @@
     padding: 1rem 1.5rem;
   }
 
+  .hero-title:hover {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.5rem;
+  }
+
   .hero-subtitle {
     font-size: 1rem;
     margin-bottom: 2rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .hero-subtitle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     padding: 0.8rem 1.2rem;
   }
 
@@ -1125,6 +1141,16 @@
     max-width: 100%;
     text-align: center;
     padding: 1rem 2rem;
+  }
+
+  .btn-primary:hover {
+    transform: none;
+    box-shadow: 0 4px 20px var(--gold-shadow);
+  }
+
+  .btn-outline:hover {
+    transform: none;
+    box-shadow: 0 6px 20px var(--gold-shadow);
   }
 
   .section-title {
@@ -1150,8 +1176,33 @@
     background-attachment: scroll;
   }
 
+  .feature-card:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .feature-card:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .feature-card:hover::before {
+    transform: scaleX(0);
+  }
+
   .feature-icon {
     font-size: 2.5rem;
+  }
+
+  .feature-card:hover .feature-icon {
+    transform: none;
+    filter: grayscale(0.2);
+  }
+
+  .feature-card:hover h3 {
+    color: var(--white);
+    background: none;
+    -webkit-text-fill-color: var(--white);
+    filter: none;
   }
 
   .features-grid,
@@ -1164,8 +1215,29 @@
     padding: 2.5rem 2rem;
   }
 
+  .service-card:hover {
+    transform: none;
+    box-shadow: 0 16px 48px var(--gold-shadow);
+  }
+
+  .service-card:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
   .service-icon {
     font-size: 3rem;
+  }
+
+  .service-card:hover .service-icon {
+    transform: none;
+    filter: grayscale(0.1);
+  }
+
+  .service-card:hover h3 {
+    color: var(--white);
+    background: none;
+    -webkit-text-fill-color: var(--white);
+    filter: none;
   }
 
   .gallery-grid {
@@ -1175,6 +1247,16 @@
 
   .gallery-item {
     aspect-ratio: 4/3;
+  }
+
+  .gallery-item:hover {
+    transform: none;
+    box-shadow: 0 16px 40px var(--gold-shadow);
+  }
+
+  .gallery-item:hover img {
+    transform: none;
+    filter: brightness(0.95);
   }
 
   .stats-section {
@@ -1191,8 +1273,16 @@
     padding: 1.5rem 1rem;
   }
 
+  .stat-item:hover {
+    transform: none;
+  }
+
   .stat-number {
     font-size: 2.5rem;
+  }
+
+  .stat-item:hover .stat-number {
+    transform: none;
   }
 
   .stat-label {
@@ -1211,6 +1301,26 @@
   .contact-form,
   .contact-info {
     padding: 2rem 1.5rem;
+  }
+
+  .contact-form:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-form:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .contact-info:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-info:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .contact-info:hover::before {
+    transform: scaleX(0);
   }
 
   .gallery-section {
@@ -1252,16 +1362,44 @@
   .hero-title {
     font-size: 1.75rem;
     line-height: 1.1;
+    padding: 1rem 1.2rem;
+  }
+
+  .hero-title:hover {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.2rem;
   }
 
   .hero-subtitle {
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .hero-subtitle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 0.6rem 1rem;
   }
 
   .hero-buttons .btn {
     padding: 0.875rem 1.5rem;
     font-size: 0.95rem;
+  }
+
+  .btn-primary:hover {
+    transform: none;
+    box-shadow: 0 4px 20px var(--gold-shadow);
+  }
+
+  .btn-outline:hover {
+    transform: none;
+    box-shadow: 0 6px 20px var(--gold-shadow);
   }
 
   .section-title {
@@ -1287,6 +1425,19 @@
     padding: 1.5rem 1.25rem;
   }
 
+  .feature-card:hover {
+    transform: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .feature-card:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .feature-card:hover::before {
+    transform: scaleX(0);
+  }
+
   .feature-card {
     background-size: cover;
     background-position: center center;
@@ -1298,9 +1449,42 @@
     margin-bottom: 1rem;
   }
 
+  .feature-card:hover .feature-icon {
+    transform: none;
+    filter: grayscale(0.2);
+  }
+
+  .feature-card:hover h3 {
+    color: var(--white);
+    background: none;
+    -webkit-text-fill-color: var(--white);
+    filter: none;
+  }
+
   .service-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+  }
+
+  .service-card:hover {
+    transform: none;
+    box-shadow: 0 16px 48px var(--gold-shadow);
+  }
+
+  .service-card:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .service-card:hover .service-icon {
+    transform: none;
+    filter: grayscale(0.1);
+  }
+
+  .service-card:hover h3 {
+    color: var(--white);
+    background: none;
+    -webkit-text-fill-color: var(--white);
+    filter: none;
   }
 
   .stats-grid {
@@ -1312,6 +1496,14 @@
     font-size: 2rem;
   }
 
+  .stat-item:hover {
+    transform: none;
+  }
+
+  .stat-item:hover .stat-number {
+    transform: none;
+  }
+
   .stat-label {
     font-size: 0.7rem;
   }
@@ -1319,6 +1511,26 @@
   .contact-form,
   .contact-info {
     padding: 1.5rem 1rem;
+  }
+
+  .contact-form:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-form:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .contact-info:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-info:hover::after {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .contact-info:hover::before {
+    transform: scaleX(0);
   }
 
   .form-group {
@@ -1329,6 +1541,11 @@
   .form-group textarea {
     padding: 0.875rem 1rem;
     font-size: 0.95rem;
+  }
+
+  .form-group input:hover,
+  .form-group textarea:hover {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .section-subtitle {

@@ -485,6 +485,15 @@
     font-size: var(--text-sm);
   }
 
+  .btn-primary:hover {
+    background: var(--primary-color);
+    transform: none;
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-200);
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
@@ -492,6 +501,11 @@
 
   .stat-card {
     padding: var(--space-4);
+  }
+
+  .stat-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 
   .stat-icon {
@@ -509,6 +523,11 @@
 
   .project-card {
     border-radius: var(--radius-sm);
+  }
+
+  .project-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 
   .project-header {
@@ -577,6 +596,11 @@
     padding: var(--space-3);
   }
 
+  .phase-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
   .phase-header {
     flex-direction: column;
     align-items: flex-start;
@@ -609,6 +633,11 @@
   .btn-complete {
     padding: var(--space-2) var(--space-3);
     font-size: var(--text-xs);
+  }
+
+  .btn-complete:hover {
+    background: var(--success-color);
+    transform: none;
   }
 
   .completed-badge {
@@ -646,6 +675,11 @@
   .form-group select {
     padding: var(--space-2);
     font-size: var(--text-sm);
+  }
+
+  .form-group input:hover,
+  .form-group select:hover {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .modal-actions {

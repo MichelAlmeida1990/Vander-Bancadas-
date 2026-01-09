@@ -725,6 +725,16 @@
     font-size: var(--text-sm);
   }
 
+  .tab:hover {
+    background: transparent;
+    color: var(--gray-600);
+  }
+
+  .tab.active:hover {
+    background: var(--primary-color);
+    color: var(--white);
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
@@ -732,6 +742,11 @@
 
   .stat-card {
     padding: var(--space-4);
+  }
+
+  .stat-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 
   .stat-icon {
@@ -763,6 +778,18 @@
     flex-wrap: wrap;
   }
 
+  .period-selector button:hover {
+    background: var(--gray-100);
+  }
+
+  .period-selector button.active:hover {
+    background: var(--primary-color);
+  }
+
+  .export-btn:hover {
+    background: var(--success-color);
+  }
+
   .financial-summary {
     grid-template-columns: 1fr;
     gap: var(--space-4);
@@ -770,6 +797,11 @@
 
   .summary-card {
     padding: var(--space-4);
+  }
+
+  .summary-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 
   .summary-content .amount {
@@ -787,6 +819,15 @@
     flex-wrap: wrap;
   }
 
+  .btn-primary:hover {
+    background: var(--primary-color);
+    transform: none;
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-200);
+  }
+
   .projects-stats {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
@@ -794,6 +835,10 @@
 
   .project-stat {
     padding: var(--space-4);
+  }
+
+  .project-stat:hover {
+    transform: none;
   }
 
   .project-stat .count {
@@ -815,6 +860,11 @@
     border-radius: var(--radius-md);
   }
 
+  .client-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
   .client-header {
     padding: var(--space-3);
   }
@@ -826,6 +876,11 @@
   .ideas-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
+  }
+
+  .idea-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
   }
 
   .summary-grid {
@@ -848,14 +903,22 @@
     font-size: var(--text-sm);
   }
 
+  .projects-table tr:hover {
+    background: transparent;
+  }
+
   .table-actions {
     flex-direction: column;
     gap: var(--space-1);
   }
 
-  .icon-btn {
-    width: 28px;
-    height: 28px;
+  .icon-btn:hover {
+    background: var(--gray-100);
+  }
+
+  .icon-btn.danger:hover {
+    background: var(--gray-100);
+    color: var(--gray-600);
   }
 
   .idea-metrics {
