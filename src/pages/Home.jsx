@@ -134,6 +134,15 @@ function Home() {
     }
   }
 
+  const handleForceWhatsApp = () => {
+    const name = formData.name || 'Nome'
+    const phone = formData.phone || ''
+    const message = formData.message || ''
+    const whatsappMessage = `Olá! Meu nome é ${name}. ${message} Telefone: ${phone}`
+    const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
+    window.location.href = whatsappUrl
+  }
+
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     
@@ -468,6 +477,14 @@ function Home() {
                   onClick={handleEmailSubmit}
                 >
                   Enviar por Email
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-link"
+                  onClick={handleForceWhatsApp}
+                  style={{ marginTop: 8, fontSize: '0.9rem' }}
+                >
+                  Ir direto para o WhatsApp
                 </button>
                 {formErrors.submit && (
                   <div className="error-message submit-error" role="alert">

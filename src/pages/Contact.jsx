@@ -16,6 +16,16 @@ function Contact() {
     })
   }
 
+  const handleForceWhatsApp = () => {
+    const nome = formData.nome || 'Nome'
+    const email = formData.email || ''
+    const telefone = formData.telefone || ''
+    const mensagem = formData.mensagem || ''
+    const whatsappMessage = `Olá! Meu nome é ${nome}. ${mensagem} Email: ${email} Telefone: ${telefone}`
+    const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
+    window.location.href = whatsappUrl
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const whatsappMessage = `Olá! Meu nome é ${formData.nome}. ${formData.mensagem} Email: ${formData.email} Telefone: ${formData.telefone}`
@@ -99,6 +109,9 @@ function Contact() {
                 </button>
                 <button type="button" className="btn btn-outline btn-large" onClick={handleEmailSubmit}>
                   Enviar por Email
+                </button>
+                <button type="button" className="btn btn-link" onClick={handleForceWhatsApp} style={{ marginTop: 8, fontSize: '0.9rem' }}>
+                  Ir direto para o WhatsApp
                 </button>
               </form>
             </div>
