@@ -188,19 +188,34 @@ function Home() {
     }
   }
 
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault()
+
+    const validation = validateForm(formData, 'contact')
+    if (!validation.isValid) {
+      setFormErrors(validation.errors)
+      return
+    }
+
+    const subject = 'Contato - Vander Porcelanato'
+    const body = `Olá!\n\nNome: ${formData.name}\nTelefone: ${formData.phone}\n\nMensagem:\n${formData.message}`
+    const mailtoUrl = `mailto:vanderporcelanato@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    window.location.href = mailtoUrl
+  }
+
   return (
     <div>
       <SEO 
         title="Soluções Premium em Porcelanato"
-        description="Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional na Grande São Paulo. Mais de 1.000 projetos entregues com qualidade premium."
-        keywords="bancadas porcelanato, cubas esculpidas, limpeza quartzo, granito, mármore, São Paulo"
+        description="Especialistas em bancadas em porcelanato, cubas esculpidas e projetos sob medida na Grande São Paulo. Mais de 1.000 projetos entregues com qualidade premium."
+        keywords="bancadas porcelanato, cubas esculpidas, porcelanato, lâminas sinterizadas, São Paulo"
         canonicalUrl="https://vanderbancadas.com.br"
         ogImage="/gallery/bancada-porcelanato-001.jpg"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
           "name": "Vander Bancadas",
-          "description": "Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional na Grande São Paulo",
+          "description": "Especialistas em bancadas em porcelanato, cubas esculpidas e projetos sob medida na Grande São Paulo",
           "url": "https://vanderbancadas.com.br",
           "telephone": "+55-11-97718-0367",
           "address": {
@@ -214,7 +229,7 @@ function Home() {
             "latitude": "-23.5505",
             "longitude": "-46.6333"
           },
-          "serviceType": "Bancadas de Porcelanato, Cubas Esculpidas, Limpeza de Pedras",
+          "serviceType": "Bancadas de Porcelanato, Cubas Esculpidas, Projetos Sob Medida",
           "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "4.9",
@@ -446,6 +461,13 @@ function Home() {
                   disabled={isSubmitting}
                 >
                   <span>{isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={handleEmailSubmit}
+                >
+                  Enviar por Email
                 </button>
                 {formErrors.submit && (
                   <div className="error-message submit-error" role="alert">

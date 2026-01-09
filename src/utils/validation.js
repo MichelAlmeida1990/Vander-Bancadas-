@@ -45,7 +45,6 @@ export const validateForm = (formData, formType = 'contact') => {
 
 export const sanitizeInput = (input) => {
   return input
-    .trim()
     .replace(/[<>]/g, '') // Remove tags HTML
     .replace(/javascript:/gi, '') // Remove javascript:
     .replace(/on\w+=/gi, '') // Remove event handlers

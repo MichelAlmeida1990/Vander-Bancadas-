@@ -7,39 +7,8 @@ const STORAGE_KEY = 'vander_admin_data_v1'
 const AdminDataContext = createContext(null)
 
 const seedData = {
-  clients: [
-    { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 97718-0367' },
-    { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 97718-0367' },
-    { id: 3, name: 'Carlos Oliveira', email: 'carlos@email.com', phone: '(11) 97718-0367' }
-  ],
-  projects: [
-    {
-      id: 1,
-      name: 'Cozinha Apartamento 1201',
-      clientId: 1,
-      category: 'Cozinha',
-      value: 25000,
-      startDate: '2024-06-01',
-      endDate: '2024-06-18',
-      status: 'completed',
-      paid: true,
-      notes: '',
-      history: []
-    },
-    {
-      id: 2,
-      name: 'Banheiro Casa de Campo',
-      clientId: 2,
-      category: 'Banheiro',
-      value: 18000,
-      startDate: '2024-06-15',
-      endDate: '2024-06-30',
-      status: 'in-progress',
-      paid: false,
-      notes: '',
-      history: []
-    }
-  ]
+  clients: [],
+  projects: []
 }
 
 const safeParse = (value) => {

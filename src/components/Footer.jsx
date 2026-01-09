@@ -11,7 +11,7 @@ function Footer() {
             <h3 className="footer-logo">
               Vander <span className="logo-primary">Porcelanato</span>
             </h3>
-            <p>Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional de quartzo e pedras naturais na Grande São Paulo.</p>
+            <p>Especialistas em bancadas em porcelanato, cubas esculpidas e projetos sob medida na Grande São Paulo.</p>
           </div>
 
           <div className="footer-section">
@@ -52,6 +52,7 @@ function Footer() {
 
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Vander Porcelanato. Todos os direitos reservados.</p>
+          <a className="admin-access-link" href="/admin">Acesso Restrito</a>
         </div>
       </div>
     </footer>

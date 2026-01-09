@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { DollarSign, TrendingUp, Users, Calendar, FileText, AlertCircle, CheckCircle, Clock, Target, Zap, Award, ShoppingCart, CreditCard, Building, Phone, Mail, Star, Filter, Download, Plus, Edit, Trash2, Eye, BarChart3, Settings } from 'lucide-react'
-import { format, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
+import { format, startOfMonth, endOfMonth, subMonths, addMonths, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import './Dashboard.css'
 import '../styles/admin-footer.css'
@@ -15,6 +15,9 @@ const Dashboard = () => {
 
   const now = useMemo(() => new Date(), [])
 
+  const monthStart = useMemo(() => startOfMonth(now), [now])
+  const monthEnd = useMemo(() => endOfMonth(now), [now])
+
   const normalizedProjects = useMemo(() => {
     return projects.map((p) => {
       const dateStr = p.endDate || p.startDate
@@ -26,6 +29,33 @@ const Dashboard = () => {
       }
     })
   }, [projects])
+
+  const projectsThisMonth = useMemo(() => {
+    return normalizedProjects.filter((p) => p.date && isSameMonth(p.date, now))
+  }, [normalizedProjects, now])
+
+  const monthActiveClientsCount = useMemo(() => {
+    const set = new Set()
+    for (const p of projectsThisMonth) {
+      if (p.clientId) set.add(p.clientId)
+    }
+    return set.size
+  }, [projectsThisMonth])
+
+  const profitMonth = useMemo(() => {
+    return projectsThisMonth.reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+  }, [projectsThisMonth])
+
+  const profitYear = useMemo(() => {
+    const year = now.getFullYear()
+    return normalizedProjects
+      .filter((p) => p.date && p.date.getFullYear() === year)
+      .reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+  }, [normalizedProjects, now])
+
+  const monthCalendarDays = useMemo(() => {
+    return eachDayOfInterval({ start: monthStart, end: monthEnd })
+  }, [monthStart, monthEnd])
 
   const clientsComputed = useMemo(() => {
     const byClient = new Map()
@@ -155,61 +185,100 @@ const Dashboard = () => {
           icon={Users} 
           title="Clientes Ativos" 
           value={clientsComputed.filter(c => c.status === 'active').length} 
-          change={12.5}
           color="#007bff"
         />
         <StatCard 
           icon={FileText} 
           title="Projetos" 
           value={normalizedProjects.length} 
-          change={8.3}
           color="#ffc107"
         />
       </div>
 
       <div className="charts-grid">
         <div className="chart-card">
-          <h3>Faturamento vs Lucro</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={finances.revenue?.monthly?.map((rev, i) => ({
-              month: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'][i],
-              faturamento: rev,
-              lucro: finances.profit?.monthly?.[i] || 0
-            }))}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value) => `R$ ${value.toLocaleString('pt-BR')}`} />
-              <Legend />
-              <Area type="monotone" dataKey="faturamento" stackId="1" stroke="#D4A574" fill="#D4A574" fillOpacity={0.6} />
-              <Area type="monotone" dataKey="lucro" stackId="1" stroke="#28a745" fill="#28a745" fillOpacity={0.6} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <h3>Resumo do Mês</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+            <div style={{ padding: 14, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Users size={18} />
+                <strong>Clientes ativos do mês</strong>
+              </div>
+              <div style={{ fontSize: 26, marginTop: 8 }}>
+                {monthActiveClientsCount}
+              </div>
+            </div>
+
+            <div style={{ padding: 14, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <TrendingUp size={18} />
+                <strong>Lucro do mês</strong>
+              </div>
+              <div style={{ fontSize: 26, marginTop: 8 }}>
+                R$ {profitMonth.toLocaleString('pt-BR')}
+              </div>
+            </div>
+
+            <div style={{ padding: 14, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <DollarSign size={18} />
+                <strong>Lucro anual</strong>
+              </div>
+              <div style={{ fontSize: 26, marginTop: 8 }}>
+                R$ {profitYear.toLocaleString('pt-BR')}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="chart-card">
-          <h3>Distribuição de Despesas</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={finances.expenses?.categories || []}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {(finances.expenses?.categories || []).map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `R$ ${value.toLocaleString('pt-BR')}`} />
-            </PieChart>
-          </ResponsiveContainer>
+          <h3>Calendário do Mês ({format(now, 'MMMM yyyy', { locale: ptBR })})</h3>
+          {monthCalendarDays.length === 0 ? (
+            <p>Nenhum dia disponível.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: 8 }}>
+              {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d) => (
+                <div key={d} style={{ fontWeight: 700, opacity: 0.75, textAlign: 'center' }}>{d}</div>
+              ))}
+              {(() => {
+                const firstWeekday = monthStart.getDay()
+                return Array.from({ length: firstWeekday }).map((_, i) => <div key={`pad-${i}`} />)
+              })()}
+              {monthCalendarDays.map((day) => {
+                const dayProjects = projectsThisMonth.filter((p) => p.date && isSameDay(p.date, day))
+                return (
+                  <div
+                    key={day.toISOString()}
+                    style={{
+                      padding: 10,
+                      borderRadius: 10,
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      background: dayProjects.length ? 'rgba(212, 165, 116, 0.12)' : 'rgba(255,255,255,0.03)',
+                      minHeight: 64
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontWeight: 700 }}>{day.getDate()}</span>
+                      {dayProjects.length > 0 && (
+                        <span style={{ fontSize: 12, opacity: 0.9 }}>{dayProjects.length} proj.</span>
+                      )}
+                    </div>
+                    {dayProjects.slice(0, 2).map((p) => (
+                      <div key={p.id} style={{ fontSize: 12, opacity: 0.95, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {p.name}
+                      </div>
+                    ))}
+                    {dayProjects.length > 2 && (
+                      <div style={{ fontSize: 12, opacity: 0.75 }}>+{dayProjects.length - 2}...</div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
+
     </div>
   )
 
@@ -430,108 +499,6 @@ const Dashboard = () => {
     </div>
   )
 
-  const renderIdeas = () => (
-    <div className="dashboard-ideas">
-      <h3>Ideias e Oportunidades</h3>
-      
-      <div className="ideas-grid">
-        <div className="idea-card priority-high">
-          <div className="idea-header">
-            <AlertCircle size={20} color="#dc3545" />
-            <span className="priority">Alta Prioridade</span>
-          </div>
-          <h4>Expansão para Regiões</h4>
-          <p>Análise de mercado indica alta demanda por serviços premium em Campinas e Santos. Considerar abertura de filiais.</p>
-          <div className="idea-metrics">
-            <span>Potencial: R$ 500K/mês</span>
-            <span>Investimento: R$ 80K</span>
-            <span>ROI: 18 meses</span>
-          </div>
-          <div className="idea-actions">
-            <button className="btn-primary">Analisar</button>
-            <button className="btn-secondary">Arquivar</button>
-          </div>
-        </div>
-
-        <div className="idea-card priority-medium">
-          <div className="idea-header">
-            <Target size={20} color="#ffc107" />
-            <span className="priority">Média Prioridade</span>
-          </div>
-          <h4>Serviço de Manutenção</h4>
-          <p>Criar plano de manutenção anual para clientes existentes com receita recorrente garantida.</p>
-          <div className="idea-metrics">
-            <span>Potencial: R$ 150K/mês</span>
-            <span>Investimento: R$ 20K</span>
-            <span>ROI: 8 meses</span>
-          </div>
-          <div className="idea-actions">
-            <button className="btn-primary">Desenvolver</button>
-            <button className="btn-secondary">Estudar</button>
-          </div>
-        </div>
-
-        <div className="idea-card priority-low">
-          <div className="idea-header">
-            <Zap size={20} color="#28a745" />
-            <span className="priority">Baixa Prioridade</span>
-          </div>
-          <h4>Parcerias com Arquitetos</h4>
-          <p>Programa de comissionamento para arquitetos e designers de interiores.</p>
-          <div className="idea-metrics">
-            <span>Potencial: R$ 80K/mês</span>
-            <span>Investimento: R$ 5K</span>
-            <span>ROI: 3 meses</span>
-          </div>
-          <div className="idea-actions">
-            <button className="btn-primary">Implementar</button>
-            <button className="btn-secondary">Agendar</button>
-          </div>
-        </div>
-
-        <div className="idea-card innovation">
-          <div className="idea-header">
-            <Award size={20} color="#D4A574" />
-            <span className="priority">Inovação</span>
-          </div>
-          <h4>Realidade Aumentada</h4>
-          <p>App AR para visualização de bancadas no ambiente dos clientes antes da instalação.</p>
-          <div className="idea-metrics">
-            <span>Potencial: R$ 200K/mês</span>
-            <span>Investimento: R$ 50K</span>
-            <span>ROI: 12 meses</span>
-          </div>
-          <div className="idea-actions">
-            <button className="btn-primary">Prototipar</button>
-            <button className="btn-secondary">Pesquisar</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="ideas-summary">
-        <h4>Métricas de Oportunidades</h4>
-        <div className="summary-grid">
-          <div className="summary-item">
-            <span className="label">Oportunidades Ativas</span>
-            <span className="value">12</span>
-          </div>
-          <div className="summary-item">
-            <span className="label">Potencial Total</span>
-            <span className="value">R$ 930K/mês</span>
-          </div>
-          <div className="summary-item">
-            <span className="label">ROI Médio</span>
-            <span className="value">10.2 meses</span>
-          </div>
-          <div className="summary-item">
-            <span className="label">Taxa de Conversão</span>
-            <span className="value">23%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -576,13 +543,6 @@ const Dashboard = () => {
           <Users size={16} />
           Clientes
         </button>
-        <button 
-          className={`tab ${activeTab === 'ideas' ? 'active' : ''}`}
-          onClick={() => setActiveTab('ideas')}
-        >
-          <Target size={16} />
-          Ideias
-        </button>
       </div>
 
       <div className="dashboard-content">
@@ -590,7 +550,6 @@ const Dashboard = () => {
         {activeTab === 'financial' && renderFinancial()}
         {activeTab === 'projects' && renderProjects()}
         {activeTab === 'clients' && renderClients()}
-        {activeTab === 'ideas' && renderIdeas()}
       </div>
 
       {/* Footer Admin Simples */}

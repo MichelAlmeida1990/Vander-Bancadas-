@@ -23,6 +23,14 @@ function Contact() {
     window.open(whatsappUrl, '_blank')
   }
 
+  const handleEmailSubmit = (e) => {
+    e.preventDefault()
+    const subject = 'Contato - Vander Porcelanato'
+    const body = `Olá!\n\nNome: ${formData.nome}\nEmail: ${formData.email}\nTelefone: ${formData.telefone}\n\nMensagem:\n${formData.mensagem}`
+    const mailtoUrl = `mailto:vanderporcelanato@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    window.location.href = mailtoUrl
+  }
+
   return (
     <div>
       <section className="page-hero">
@@ -88,6 +96,9 @@ function Contact() {
 
                 <button type="submit" className="btn btn-primary btn-large">
                   Enviar
+                </button>
+                <button type="button" className="btn btn-outline btn-large" onClick={handleEmailSubmit}>
+                  Enviar por Email
                 </button>
               </form>
             </div>
