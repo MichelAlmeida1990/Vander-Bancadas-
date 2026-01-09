@@ -74,57 +74,17 @@ const Projects = () => {
   ]
 
   useEffect(() => {
-    // Dados mockados
-    setClients([
-      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 97718-0367', type: 'residential', projects: 3, totalValue: 75000 },
-      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 97718-0367', type: 'residential', projects: 2, totalValue: 45000 },
-      { id: 3, name: 'Tech Solutions Ltda', email: 'contato@techsolutions.com.br', phone: '(11) 97718-0367', type: 'commercial', projects: 5, totalValue: 180000 }
-    ])
-
-    setProjects([
-      {
-        id: 1,
-        name: 'Cozinha Moderna - Apartamento 1201',
-        clientId: 1,
-        clientName: 'João Silva',
-        category: 'Cozinhas',
-        estimatedValue: 25000,
-        actualValue: 24500,
-        startDate: '2024-06-01',
-        estimatedEndDate: '2024-06-20',
-        actualEndDate: '2024-06-18',
-        status: 'completed',
-        phases: [
-          { id: 'analysis', status: 'completed', completedDate: '2024-06-02', actualCost: 2500 },
-          { id: 'approval', status: 'completed', completedDate: '2024-06-05', actualCost: 0 },
-          { id: 'materials', status: 'completed', completedDate: '2024-06-08', actualCost: 7500 },
-          { id: 'preparation', status: 'completed', completedDate: '2024-06-12', actualCost: 5000 },
-          { id: 'installation', status: 'completed', completedDate: '2024-06-16', actualCost: 7500 },
-          { id: 'finalization', status: 'completed', completedDate: '2024-06-18', actualCost: 2000 }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Banheiro Premium - Casa de Campo',
-        clientId: 2,
-        clientName: 'Maria Santos',
-        category: 'Banheiros',
-        estimatedValue: 18000,
-        actualValue: null,
-        startDate: '2024-06-15',
-        estimatedEndDate: '2024-06-30',
-        actualEndDate: null,
-        status: 'in-progress',
-        phases: [
-          { id: 'analysis', status: 'completed', completedDate: '2024-06-16', actualCost: 1800 },
-          { id: 'approval', status: 'completed', completedDate: '2024-06-18', actualCost: 0 },
-          { id: 'materials', status: 'in-progress', completedDate: null, actualCost: 4500 },
-          { id: 'preparation', status: 'pending', completedDate: null, actualCost: null },
-          { id: 'installation', status: 'pending', completedDate: null, actualCost: null },
-          { id: 'finalization', status: 'pending', completedDate: null, actualCost: null }
-        ]
-      }
-    ])
+    // Carregar dados do localStorage ou API
+    const savedClients = localStorage.getItem('vander_clients')
+    const savedProjects = localStorage.getItem('vander_projects')
+    
+    if (savedClients) {
+      setClients(JSON.parse(savedClients))
+    }
+    
+    if (savedProjects) {
+      setProjects(JSON.parse(savedProjects))
+    }
   }, [])
 
   const toggleProjectExpansion = (projectId) => {
@@ -160,7 +120,10 @@ const Projects = () => {
       }))
     }
 
-    setProjects([...projects, newProject])
+    const updatedProjects = [...projects, newProject]
+    setProjects(updatedProjects)
+    localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+    
     setShowNewProject(false)
     setFormData({
       ...formData,
@@ -191,7 +154,10 @@ const Projects = () => {
       totalValue: 0
     }
 
-    setClients([...clients, newClient])
+    const updatedClients = [...clients, newClient]
+    setClients(updatedClients)
+    localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+    
     setShowNewClient(false)
     setFormData({
       ...formData,
@@ -204,7 +170,7 @@ const Projects = () => {
   }
 
   const updatePhaseStatus = (projectId, phaseId, newStatus) => {
-    setProjects(projects.map(project => {
+    const updatedProjects = projects.map(project => {
       if (project.id === projectId) {
         const updatedPhases = project.phases.map(phase => {
           if (phase.id === phaseId) {
@@ -239,7 +205,33 @@ const Projects = () => {
         }
       }
       return project
-    }))
+    })
+
+    setProjects(updatedProjects)
+    localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+  }
+
+  const deleteClient = (clientId) => {
+    if (window.confirm('Tem certeza que deseja excluir este cliente? Todos os projetos associados também serão excluídos.')) {
+      // Remover projetos associados ao cliente
+      const updatedProjects = projects.filter(p => p.clientId !== clientId)
+      // Remover o cliente
+      const updatedClients = clients.filter(c => c.id !== clientId)
+      
+      setProjects(updatedProjects)
+      setClients(updatedClients)
+      
+      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+      localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+    }
+  }
+
+  const deleteProject = (projectId) => {
+    if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
+      const updatedProjects = projects.filter(p => p.id !== projectId)
+      setProjects(updatedProjects)
+      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+    }
   }
 
   const getStatusColor = (status) => {

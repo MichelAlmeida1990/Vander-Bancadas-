@@ -11,7 +11,31 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [dateRange, setDateRange] = useState('30d')
 
-  const { clients, projects } = useAdminData()
+  const { clients, projects, setClients, setProjects } = useAdminData()
+
+  const deleteClient = (clientId) => {
+    if (window.confirm('Tem certeza que deseja excluir este cliente? Todos os projetos associados também serão excluídos.')) {
+      // Remover projetos associados ao cliente
+      const updatedProjects = projects.filter(p => p.clientId !== clientId)
+      // Remover o cliente
+      const updatedClients = clients.filter(c => c.id !== clientId)
+      
+      setProjects(updatedProjects)
+      setClients(updatedClients)
+      
+      // Atualizar localStorage
+      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+      localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+    }
+  }
+
+  const deleteProject = (projectId) => {
+    if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
+      const updatedProjects = projects.filter(p => p.id !== projectId)
+      setProjects(updatedProjects)
+      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+    }
+  }
 
   const now = useMemo(() => new Date(), [])
 
@@ -435,7 +459,11 @@ const Dashboard = () => {
                     <button className="icon-btn" title="Editar">
                       <Edit size={16} />
                     </button>
-                    <button className="icon-btn danger" title="Excluir">
+                    <button 
+                      className="icon-btn danger" 
+                      title="Excluir"
+                      onClick={() => deleteProject(project.id)}
+                    >
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -470,8 +498,15 @@ const Dashboard = () => {
                 </span>
               </div>
               <div className="client-actions">
-                <button className="icon-btn">
+                <button className="icon-btn" title="Editar">
                   <Edit size={16} />
+                </button>
+                <button 
+                  className="icon-btn danger" 
+                  title="Excluir Cliente"
+                  onClick={() => deleteClient(client.id)}
+                >
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>

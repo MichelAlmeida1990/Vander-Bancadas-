@@ -139,6 +139,8 @@ export function AdminDataProvider({ children }) {
   const value = {
     clients,
     projects: projectsEnriched,
+    setClients,
+    setProjects,
     addClient,
     updateClient,
     deleteClient,
