@@ -25,8 +25,8 @@ const ProjectsClean = () => {
   useEffect(() => {
     console.log('ProjectsClean montado')
     setClients([
-      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 98765-4321' },
-      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 91234-5678' }
+      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 97718-0367' },
+      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 97718-0367' }
     ])
 
     setProjects([

@@ -1,4 +1,5 @@
 import React from 'react'
+import whatsappIcon from '../assets/whatsapp-icon.png'
 import './Footer.css'
 
 function Footer() {
@@ -27,10 +28,15 @@ function Footer() {
             <h4>Contato</h4>
             <ul>
               <li>
-                <a href="tel:+5511971678867">(11) 97167-8867</a>
+                <a href="tel:+5511977180367">(11) 97718-0367</a>
               </li>
               <li>
-                <a href="https://wa.me/5511971678867" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/5511977180367" target="_blank" rel="noopener noreferrer" className="whatsapp-link">
+                  <img 
+                    src={whatsappIcon} 
+                    alt="WhatsApp" 
+                    className="whatsapp-icon"
+                  />
                   WhatsApp
                 </a>
               </li>

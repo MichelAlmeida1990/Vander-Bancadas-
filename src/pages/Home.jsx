@@ -28,6 +28,28 @@ function Home() {
   // Usando a primeira (0), a imagem melhorada (23) e a nova melhorada (24)
   const featuredImages = [0, 23, 24] // Imagens 1, 24 (Melhorar Imagem), e 25 (Melhorar Imagem 1)
 
+  // Projetos em destaque na galeria
+  const featuredProjects = [
+    {
+      id: 1,
+      title: 'Cozinha Moderna',
+      image: '/gallery/bancada-porcelanato-001.jpg',
+      description: 'Bancada de porcelanato com design moderno e acabamento premium'
+    },
+    {
+      id: 2,
+      title: 'Banheiro Executivo',
+      image: '/gallery/bancada-porcelanato-015.jpg',
+      description: 'Bancada para banheiro com cubas integradas e espaço otimizado'
+    },
+    {
+      id: 3,
+      title: 'Área Gourmet',
+      image: '/gallery/bancada-porcelanato-025.jpg',
+      description: 'Espaço gourmet completo com bancada e churrasqueira'
+    }
+  ]
+
   // Carousel automático
   useEffect(() => {
     const carouselInterval = setInterval(() => {
@@ -112,7 +134,7 @@ function Home() {
     }
   }
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault()
     
     // Track form submission attempt
@@ -132,7 +154,7 @@ function Home() {
     
     try {
       const whatsappMessage = `Olá! Meu nome é ${formData.name}. ${formData.message} Telefone: ${formData.phone}`
-      const whatsappUrl = `https://wa.me/5511971678867?text=${encodeURIComponent(whatsappMessage)}`
+      const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
       
       // Track WhatsApp click
       if (window.trackAnalytics) {
@@ -180,7 +202,7 @@ function Home() {
           "name": "Vander Bancadas",
           "description": "Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional na Grande São Paulo",
           "url": "https://vanderbancadas.com.br",
-          "telephone": "+55-11-97167-8867",
+          "telephone": "+55-11-97718-0367",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "São Paulo",
@@ -216,7 +238,7 @@ function Home() {
         </div>
         <div className="hero-content">
           <h1 className="hero-title scroll-reveal">
-            Soluções Premium em <span className="text-primary">Porcelanato</span>
+            Soluções Premium em <span className="text-primary">Porcelanato e lâminas sinterizadas</span>
           </h1>
           <p className="hero-subtitle scroll-reveal">Durabilidade e Elegância em Cada Detalhe</p>
           <div className="hero-buttons scroll-reveal">
@@ -249,7 +271,7 @@ function Home() {
             <div className="feature-card scroll-reveal-left">
               <div className="feature-icon">🏆</div>
               <h3>Qualidade Premium</h3>
-              <p>Materiais selecionados e acabamento impecável em cada projeto</p>
+              <p>Acabamento de alto padrão</p>
             </div>
             <div className="feature-card scroll-reveal">
               <div className="feature-icon">⚡</div>
@@ -276,7 +298,7 @@ function Home() {
               <div className="stat-label">Projetos Entregues</div>
             </div>
             <div className="stat-item scroll-reveal">
-              <div className="stat-number">15+</div>
+              <div className="stat-number">10+</div>
               <div className="stat-label">Anos de Experiência</div>
             </div>
             <div className="stat-item scroll-reveal">
@@ -319,18 +341,6 @@ function Home() {
                 <li>✓ Integração perfeita com a bancada</li>
                 <li>✓ Funcionalidade e estética</li>
                 <li>✓ Fácil limpeza e manutenção</li>
-              </ul>
-            </div>
-
-            <div className="service-card scroll-reveal-right">
-              <div className="service-icon">✨</div>
-              <h3>Limpeza de Quartzo e Pedras Naturais</h3>
-              <p>Serviço especializado de limpeza e restauração para manter suas superfícies como novas.</p>
-              <ul>
-                <li>✓ Remoção de manchas profundas</li>
-                <li>✓ Restauração do brilho original</li>
-                <li>✓ Tratamento profissional</li>
-                <li>✓ Proteção duradoura</li>
               </ul>
             </div>
           </div>
@@ -448,7 +458,7 @@ function Home() {
               <h3>Informações de Contato</h3>
               <div className="info-item">
                 <strong>Telefone</strong>
-                <a href="tel:+5511971678867">(11) 97167-8867</a>
+                <a href="tel:+5511977180367">(11) 97718-0367</a>
               </div>
               <div className="info-item">
                 <strong>Instagram</strong>
@@ -461,7 +471,13 @@ function Home() {
                 <p>Atendemos toda Grande São Paulo</p>
               </div>
               <div className="info-item">
-                <a href="https://wa.me/5511971678867" target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                <strong>WhatsApp</strong>
+                <a href="https://wa.me/5511977180367" target="_blank" rel="noopener noreferrer" className="btn btn-primary whatsapp-home-link">
+                  <img 
+                    src="/whatsapp-icon.png" 
+                    alt="WhatsApp" 
+                    className="whatsapp-home-icon"
+                  />
                   WhatsApp
                 </a>
               </div>

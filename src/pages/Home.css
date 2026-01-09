@@ -136,6 +136,38 @@
   flex-wrap: wrap;
 }
 
+.whatsapp-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-home-link span {
+  color: white !important;
+  font-weight: 500;
+}
+
+.whatsapp-home-link:hover span {
+  color: white !important;
+}
+
+.whatsapp-home-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.whatsapp-home-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--gold-shadow);
+}
+
+.whatsapp-home-link:hover .whatsapp-home-icon {
+  transform: scale(1.1);
+}
+
 .btn {
   padding: 0.75rem 2rem;
   border-radius: 5px;
@@ -452,6 +484,8 @@
   letter-spacing: -0.04em;
   line-height: 1;
   display: block;
+  padding: 0 0.25em;
+  overflow: visible;
   transition: transform 0.3s ease, filter 0.3s ease;
   filter: drop-shadow(0 3px 6px var(--gold-shadow));
 }
@@ -490,6 +524,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2.5rem;
+  justify-items: center;
+}
+
+@media (min-width: 900px) {
+  .services-grid {
+    grid-template-columns: repeat(2, minmax(320px, 480px));
+    justify-content: center;
+  }
 }
 
 .service-card {

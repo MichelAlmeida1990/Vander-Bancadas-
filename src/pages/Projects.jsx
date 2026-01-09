@@ -76,9 +76,9 @@ const Projects = () => {
   useEffect(() => {
     // Dados mockados
     setClients([
-      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 98765-4321', type: 'residential', projects: 3, totalValue: 75000 },
-      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 91234-5678', type: 'residential', projects: 2, totalValue: 45000 },
-      { id: 3, name: 'Tech Solutions Ltda', email: 'contato@techsolutions.com.br', phone: '(11) 3333-4444', type: 'commercial', projects: 5, totalValue: 180000 }
+      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 97718-0367', type: 'residential', projects: 3, totalValue: 75000 },
+      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 97718-0367', type: 'residential', projects: 2, totalValue: 45000 },
+      { id: 3, name: 'Tech Solutions Ltda', email: 'contato@techsolutions.com.br', phone: '(11) 97718-0367', type: 'commercial', projects: 5, totalValue: 180000 }
     ])
 
     setProjects([
@@ -528,7 +528,7 @@ const Projects = () => {
                   type="tel"
                   value={formData.clientPhone}
                   onChange={(e) => setFormData({...formData, clientPhone: e.target.value})}
-                  placeholder="(11) 98765-4321"
+                  placeholder="(11) 97718-0367"
                 />
               </div>
               <div className="form-group">

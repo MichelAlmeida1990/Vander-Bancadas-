@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
+import { AdminDataProvider } from './context/AdminDataContext.jsx'
 import App from './App.jsx'
 import './index.css'
 
@@ -8,7 +9,9 @@ import './index.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <HelmetProvider>
-      <App />
+      <AdminDataProvider>
+        <App />
+      </AdminDataProvider>
     </HelmetProvider>
   </React.StrictMode>,
 )

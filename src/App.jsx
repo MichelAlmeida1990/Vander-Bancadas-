@@ -20,7 +20,7 @@ function App() {
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%', position: 'relative' }}>
         <Accessibility />
         <Analytics />
-        <Navbar />
+        {!isAdminRoute && <Navbar />}
         <main id="main-content" style={{ flex: 1, width: '100%', position: 'relative' }}>
           <Routes>
             <Route path="/" element={<Home />} />

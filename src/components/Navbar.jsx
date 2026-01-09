@@ -8,7 +8,6 @@ const navItems = [
   { path: '/servicos', label: 'Serviços', hash: '#servicos' },
   { path: '/galeria', label: 'Galeria', hash: '#galeria' },
   { path: '/contato', label: 'Contato', hash: '#contato' },
-  { path: '/admin', label: 'Admin', hash: '' },
 ]
 
 function Navbar() {

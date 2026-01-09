@@ -1,15 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Plus, Edit, Trash2, CheckCircle, Clock, DollarSign, User, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useLocation } from 'react-router-dom'
 import './ProjectsClean.css'
 import '../styles/admin-footer.css'
+import { useAdminData } from '../context/AdminDataContext.jsx'
 
 function ProjectsSimple() {
-  const [projects, setProjects] = useState([])
-  const [clients, setClients] = useState([])
+  const location = useLocation()
+  const {
+    clients,
+    projects,
+    addClient,
+    addProject,
+    updateProject,
+    deleteProject: deleteProjectFromStore
+  } = useAdminData()
+
   const [showNewProject, setShowNewProject] = useState(false)
   const [showNewClient, setShowNewClient] = useState(false)
+  const [feedback, setFeedback] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     clientId: '',
@@ -22,39 +33,27 @@ function ProjectsSimple() {
     clientPhone: ''
   })
 
-  useEffect(() => {
-    setClients([
-      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 98765-4321' },
-      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 91234-5678' }
-    ])
+  const showFeedback = (message) => {
+    setFeedback(message)
+    setTimeout(() => {
+      setFeedback('')
+    }, 2500)
+  }
 
-    setProjects([
-      {
-        id: 1,
-        name: 'Cozinha Apartamento 1201',
-        clientId: 1,
-        clientName: 'João Silva',
-        category: 'Cozinha',
-        value: 25000,
-        startDate: '2024-06-01',
-        endDate: '2024-06-18',
-        status: 'completed',
-        paid: true
-      },
-      {
-        id: 2,
-        name: 'Banheiro Casa de Campo',
-        clientId: 2,
-        clientName: 'Maria Santos',
-        category: 'Banheiro',
-        value: 18000,
-        startDate: '2024-06-15',
-        endDate: '2024-06-30',
-        status: 'in-progress',
-        paid: false
-      }
-    ])
-  }, [])
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const modal = params.get('modal')
+
+    if (modal === 'client') {
+      setShowNewClient(true)
+      setShowNewProject(false)
+    }
+
+    if (modal === 'project') {
+      setShowNewProject(true)
+      setShowNewClient(false)
+    }
+  }, [location.search])
 
   const openClientModal = () => {
     console.log('Abrindo modal cliente')
@@ -69,11 +68,13 @@ function ProjectsSimple() {
   const closeClientModal = () => {
     console.log('Fechando modal cliente')
     setShowNewClient(false)
+    window.history.replaceState(null, '', '/admin/projects')
   }
 
   const closeProjectModal = () => {
     console.log('Fechando modal projeto')
     setShowNewProject(false)
+    window.history.replaceState(null, '', '/admin/projects')
   }
 
   const handleNewProject = () => {
@@ -82,21 +83,18 @@ function ProjectsSimple() {
       return
     }
 
-    const newProject = {
-      id: projects.length + 1,
+    addProject({
       name: formData.name,
       clientId: parseInt(formData.clientId),
-      clientName: clients.find(c => c.id === parseInt(formData.clientId))?.name || '',
       category: formData.category,
       value: parseFloat(formData.value),
       startDate: formData.startDate,
       endDate: formData.endDate,
       status: 'pending',
       paid: false
-    }
-
-    setProjects([...projects, newProject])
+    })
     setShowNewProject(false)
+    showFeedback('Projeto cadastrado com sucesso!')
     setFormData({ 
       name: '', 
       clientId: '', 
@@ -116,15 +114,13 @@ function ProjectsSimple() {
       return
     }
 
-    const newClient = {
-      id: clients.length + 1,
+    addClient({
       name: formData.clientName,
       email: formData.clientEmail,
       phone: formData.clientPhone
-    }
-
-    setClients([...clients, newClient])
+    })
     setShowNewClient(false)
+    showFeedback('Cliente cadastrado com sucesso!')
     setFormData({ 
       name: '', 
       clientId: '', 
@@ -139,26 +135,17 @@ function ProjectsSimple() {
   }
 
   const updateProjectStatus = (projectId, newStatus) => {
-    setProjects(projects.map(project => {
-      if (project.id === projectId) {
-        return { ...project, status: newStatus }
-      }
-      return project
-    }))
+    updateProject(projectId, { status: newStatus })
   }
 
   const togglePayment = (projectId) => {
-    setProjects(projects.map(project => {
-      if (project.id === projectId) {
-        return { ...project, paid: !project.paid }
-      }
-      return project
-    }))
+    const project = projects.find((p) => p.id === projectId)
+    updateProject(projectId, { paid: !project?.paid })
   }
 
   const deleteProject = (projectId) => {
     if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
-      setProjects(projects.filter(p => p.id !== projectId))
+      deleteProjectFromStore(projectId)
     }
   }
 
@@ -185,10 +172,49 @@ function ProjectsSimple() {
 
   return (
     <div className="projects-page">
+      {feedback && (
+        <div style={{
+          position: 'fixed',
+          top: 16,
+          right: 16,
+          zIndex: 9999,
+          background: 'rgba(16, 185, 129, 0.18)',
+          color: '#fff',
+          padding: '12px 14px',
+          borderRadius: 10,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
+          border: '1px solid rgba(16, 185, 129, 0.45)',
+          maxWidth: 360,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          backdropFilter: 'blur(10px)'
+        }}>
+          <span style={{
+            width: 22,
+            height: 22,
+            borderRadius: 999,
+            background: 'rgba(16, 185, 129, 0.25)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid rgba(16, 185, 129, 0.55)'
+          }}>
+            <CheckCircle size={16} color="#34d399" />
+          </span>
+          {feedback}
+        </div>
+      )}
       {/* Header Simples */}
       <div className="page-header">
         <h1>Projetos</h1>
         <div className="header-actions">
+          <button
+            className="btn"
+            onClick={() => (window.location.href = '/admin')}
+          >
+            Dashboard
+          </button>
           <button 
             className="btn" 
             onClick={openClientModal}

@@ -1,69 +1,120 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { DollarSign, TrendingUp, Users, Calendar, FileText, AlertCircle, CheckCircle, Clock, Target, Zap, Award, ShoppingCart, CreditCard, Building, Phone, Mail, Star, Filter, Download, Plus, Edit, Trash2, Eye, BarChart3, Settings } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import './Dashboard.css'
 import '../styles/admin-footer.css'
+import { useAdminData } from '../context/AdminDataContext.jsx'
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [dateRange, setDateRange] = useState('30d')
-  const [projects, setProjects] = useState([])
-  const [clients, setClients] = useState([])
-  const [finances, setFinances] = useState({})
 
-  // Dados mockados para demonstração
-  useEffect(() => {
-    // Dados financeiros
-    setFinances({
-      revenue: {
-        current: 285000,
-        growth: 23.5,
-        monthly: [45000, 52000, 48000, 61000, 58000, 67000]
-      },
-      expenses: {
-        current: 125000,
-        growth: 12.3,
-        categories: [
-          { name: 'Matérias-primas', value: 45000, color: '#D4A574' },
-          { name: 'Mão de obra', value: 35000, color: '#B8945A' },
-          { name: 'Marketing', value: 15000, color: '#E8C9A0' },
-          { name: 'Operacional', value: 20000, color: '#F5F3F0' },
-          { name: 'Outros', value: 10000, color: '#6B6B6B' }
-        ]
-      },
-      profit: {
-        current: 160000,
-        margin: 56.1,
-        monthly: [20000, 32000, 23000, 46000, 38000, 49000]
-      },
-      cashFlow: [
-        { month: 'Jan', income: 45000, expenses: 32000 },
-        { month: 'Fev', income: 52000, expenses: 35000 },
-        { month: 'Mar', income: 48000, expenses: 28000 },
-        { month: 'Abr', income: 61000, expenses: 42000 },
-        { month: 'Mai', income: 58000, expenses: 38000 },
-        { month: 'Jun', income: 67000, expenses: 45000 }
-      ]
+  const { clients, projects } = useAdminData()
+
+  const now = useMemo(() => new Date(), [])
+
+  const normalizedProjects = useMemo(() => {
+    return projects.map((p) => {
+      const dateStr = p.endDate || p.startDate
+      const date = dateStr ? new Date(dateStr) : null
+      return {
+        ...p,
+        date,
+        client: p.clientName || ''
+      }
+    })
+  }, [projects])
+
+  const clientsComputed = useMemo(() => {
+    const byClient = new Map()
+    for (const p of normalizedProjects) {
+      if (!p.clientId) continue
+      const current = byClient.get(p.clientId) || { count: 0, total: 0 }
+      byClient.set(p.clientId, {
+        count: current.count + 1,
+        total: current.total + (Number(p.value) || 0)
+      })
+    }
+
+    return clients.map((c) => {
+      const stats = byClient.get(c.id) || { count: 0, total: 0 }
+      const status = stats.count > 0 ? 'active' : 'new'
+      return {
+        ...c,
+        projects: stats.count,
+        value: stats.total,
+        status
+      }
+    })
+  }, [clients, normalizedProjects])
+
+  const finances = useMemo(() => {
+    const paidSum = normalizedProjects.filter((p) => p.paid).reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+    const unpaidSum = normalizedProjects.filter((p) => !p.paid).reduce((sum, p) => sum + (Number(p.value) || 0), 0)
+    const totalSum = paidSum + unpaidSum
+
+    const months = Array.from({ length: 6 }).map((_, idx) => {
+      const d = subMonths(startOfMonth(now), 5 - idx)
+      return {
+        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+        label: format(d, 'MMM', { locale: ptBR })
+      }
     })
 
-    // Projetos
-    setProjects([
-      { id: 1, name: 'Cozinha Moderna', client: 'João Silva', value: 25000, status: 'completed', date: '2024-06-15', category: 'Cozinhas' },
-      { id: 2, name: 'Banheiro Premium', client: 'Maria Santos', value: 18000, status: 'in-progress', date: '2024-06-20', category: 'Banheiros' },
-      { id: 3, name: 'Área Gourmet', client: 'Carlos Oliveira', value: 35000, status: 'pending', date: '2024-06-25', category: 'Áreas Gourmet' },
-      { id: 4, name: 'Bancada Office', client: 'Ana Costa', value: 22000, status: 'completed', date: '2024-06-10', category: 'Comerciais' },
-      { id: 5, name: 'Suíte Master', client: 'Pedro Lima', value: 28000, status: 'in-progress', date: '2024-06-18', category: 'Banheiros' }
-    ])
+    const byMonthIncome = new Map(months.map((m) => [m.key, 0]))
+    for (const p of normalizedProjects) {
+      if (!p.date || Number.isNaN(p.date.getTime())) continue
+      const key = `${p.date.getFullYear()}-${String(p.date.getMonth() + 1).padStart(2, '0')}`
+      if (!byMonthIncome.has(key)) continue
+      byMonthIncome.set(key, byMonthIncome.get(key) + (Number(p.value) || 0))
+    }
 
-    // Clientes
-    setClients([
-      { id: 1, name: 'João Silva', email: 'joao@email.com', phone: '(11) 98765-4321', projects: 3, value: 75000, status: 'active' },
-      { id: 2, name: 'Maria Santos', email: 'maria@email.com', phone: '(11) 91234-5678', projects: 2, value: 45000, status: 'active' },
-      { id: 3, name: 'Carlos Oliveira', email: 'carlos@email.com', phone: '(11) 97654-3210', projects: 1, value: 35000, status: 'new' }
-    ])
-  }, [])
+    const monthly = months.map((m) => byMonthIncome.get(m.key) || 0)
+
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const prevMonthDate = subMonths(now, 1)
+    const prevMonthKey = `${prevMonthDate.getFullYear()}-${String(prevMonthDate.getMonth() + 1).padStart(2, '0')}`
+    const currentMonthIncome = byMonthIncome.get(currentMonthKey) || 0
+    const prevMonthIncome = byMonthIncome.get(prevMonthKey) || 0
+
+    const revenueGrowth = prevMonthIncome > 0 ? ((currentMonthIncome - prevMonthIncome) / prevMonthIncome) * 100 : 0
+
+    const expensesCurrent = 0
+    const expensesGrowth = 0
+
+    const profitCurrent = totalSum - expensesCurrent
+    const profitMargin = totalSum > 0 ? (profitCurrent / totalSum) * 100 : 0
+
+    const profitMonthly = monthly.map((v) => v)
+
+    const cashFlow = months.map((m, i) => ({
+      month: m.label,
+      income: monthly[i] || 0,
+      expenses: 0
+    }))
+
+    return {
+      revenue: {
+        current: totalSum,
+        growth: Number(revenueGrowth.toFixed(1)),
+        monthly
+      },
+      expenses: {
+        current: expensesCurrent,
+        growth: expensesGrowth,
+        categories: []
+      },
+      profit: {
+        current: profitCurrent,
+        margin: Number(profitMargin.toFixed(1)),
+        monthly: profitMonthly
+      },
+      cashFlow,
+      receivable: unpaidSum
+    }
+  }, [normalizedProjects, now])
 
   const StatCard = ({ icon: Icon, title, value, change, color = '#D4A574' }) => (
     <div className="stat-card">
@@ -103,14 +154,14 @@ const Dashboard = () => {
         <StatCard 
           icon={Users} 
           title="Clientes Ativos" 
-          value={clients.filter(c => c.status === 'active').length} 
+          value={clientsComputed.filter(c => c.status === 'active').length} 
           change={12.5}
           color="#007bff"
         />
         <StatCard 
           icon={FileText} 
           title="Projetos" 
-          value={projects.length} 
+          value={normalizedProjects.length} 
           change={8.3}
           color="#ffc107"
         />
@@ -254,7 +305,7 @@ const Dashboard = () => {
       <div className="projects-header">
         <h3>Gerenciamento de Projetos</h3>
         <div className="projects-actions">
-          <button className="btn-primary">
+          <button className="btn-primary" onClick={() => (window.location.href = '/admin/projects?modal=project')}>
             <Plus size={16} />
             Novo Projeto
           </button>
@@ -267,15 +318,15 @@ const Dashboard = () => {
 
       <div className="projects-stats">
         <div className="project-stat">
-          <span className="count">{projects.filter(p => p.status === 'completed').length}</span>
+          <span className="count">{normalizedProjects.filter(p => p.status === 'completed').length}</span>
           <span className="label">Concluídos</span>
         </div>
         <div className="project-stat">
-          <span className="count">{projects.filter(p => p.status === 'in-progress').length}</span>
+          <span className="count">{normalizedProjects.filter(p => p.status === 'in-progress').length}</span>
           <span className="label">Em Andamento</span>
         </div>
         <div className="project-stat">
-          <span className="count">{projects.filter(p => p.status === 'pending').length}</span>
+          <span className="count">{normalizedProjects.filter(p => p.status === 'pending').length}</span>
           <span className="label">Pendentes</span>
         </div>
       </div>
@@ -294,7 +345,7 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {projects.map(project => (
+            {normalizedProjects.map(project => (
               <tr key={project.id}>
                 <td>{project.name}</td>
                 <td>{project.client}</td>
@@ -306,7 +357,7 @@ const Dashboard = () => {
                      project.status === 'in-progress' ? 'Em Andamento' : 'Pendente'}
                   </span>
                 </td>
-                <td>{format(new Date(project.date), 'dd/MM/yyyy', { locale: ptBR })}</td>
+                <td>{project.date ? format(project.date, 'dd/MM/yyyy', { locale: ptBR }) : ''}</td>
                 <td>
                   <div className="table-actions">
                     <button className="icon-btn" title="Visualizar">
@@ -332,14 +383,14 @@ const Dashboard = () => {
     <div className="dashboard-clients">
       <div className="clients-header">
         <h3>Gestão de Clientes</h3>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={() => (window.location.href = '/admin/projects?modal=client')}>
           <Plus size={16} />
           Novo Cliente
         </button>
       </div>
 
       <div className="clients-grid">
-        {clients.map(client => (
+        {clientsComputed.map(client => (
           <div key={client.id} className="client-card">
             <div className="client-header">
               <div className="client-info">

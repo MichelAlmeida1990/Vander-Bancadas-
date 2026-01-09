@@ -19,7 +19,7 @@ function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault()
     const whatsappMessage = `Olá! Meu nome é ${formData.nome}. ${formData.mensagem} Email: ${formData.email} Telefone: ${formData.telefone}`
-    const whatsappUrl = `https://wa.me/5511971678867?text=${encodeURIComponent(whatsappMessage)}`
+    const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
     window.open(whatsappUrl, '_blank')
   }
 
@@ -97,7 +97,19 @@ function Contact() {
               
               <div className="info-item">
                 <strong>Telefone</strong>
-                <a href="tel:+5511971678867">(11) 97167-8867</a>
+                <a href="tel:+5511977180367">(11) 97718-0367</a>
+              </div>
+
+              <div className="info-item">
+                <strong>WhatsApp</strong>
+                <a href="https://wa.me/5511977180367" target="_blank" rel="noopener noreferrer" className="whatsapp-contact-link">
+                  <img 
+                    src="/whatsapp-icon.png" 
+                    alt="WhatsApp" 
+                    className="whatsapp-contact-icon"
+                  />
+                  (11) 97718-0367
+                </a>
               </div>
 
               <div className="info-item">
@@ -113,7 +125,12 @@ function Contact() {
               </div>
 
               <div className="quick-actions">
-                <a href="https://wa.me/5511971678867" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+                <a href="https://wa.me/5511977180367" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+                  <img 
+                    src="/whatsapp-icon.png" 
+                    alt="WhatsApp" 
+                    className="whatsapp-btn-icon"
+                  />
                   WhatsApp
                 </a>
               </div>
