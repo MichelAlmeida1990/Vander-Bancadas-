@@ -20,7 +20,7 @@ function Contact() {
     e.preventDefault()
     const whatsappMessage = `Olá! Meu nome é ${formData.nome}. ${formData.mensagem} Email: ${formData.email} Telefone: ${formData.telefone}`
     const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
-    window.open(whatsappUrl, '_blank')
+    window.location.href = whatsappUrl
   }
 
   const handleEmailSubmit = (e) => {

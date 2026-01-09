@@ -161,7 +161,7 @@ function Home() {
         window.trackAnalytics.whatsappClick()
       }
       
-      window.open(whatsappUrl, '_blank')
+      window.location.href = whatsappUrl
       
       // Track successful lead
       if (window.trackAnalytics) {
