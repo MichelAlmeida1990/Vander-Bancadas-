@@ -65,6 +65,10 @@
 
 .service-card {
   background: var(--dark);
+  background-image: url('/Melhorar-Imagem-5.jpeg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   padding: 3.5rem 2.5rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -79,23 +83,29 @@
 .service-card::after {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 20px;
+  transition: background 0.4s ease;
 }
 
 .service-card:hover::after {
-  opacity: 1;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .service-card:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
   border-color: rgba(212, 165, 116, 0.4);
+}
+
+.service-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 .service-icon {

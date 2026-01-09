@@ -74,17 +74,45 @@
 
 .contact-form {
   background: var(--dark);
+  background-image: url('/Melhorar-Imagem-5.jpeg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   padding: 3rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: box-shadow 0.3s ease;
   color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-form::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+}
+
+.contact-form > * {
+  position: relative;
+  z-index: 2;
 }
 
 .contact-form:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   border-color: rgba(212, 165, 116, 0.3);
+}
+
+.contact-form:hover::after {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .form-group {
@@ -140,6 +168,10 @@
 
 .contact-info {
   background: var(--dark);
+  background-image: url('/Melhorar-Imagem-5.jpeg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   padding: 3rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -148,6 +180,24 @@
   position: relative;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-info::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+}
+
+.contact-info > * {
+  position: relative;
+  z-index: 2;
 }
 
 .contact-info::before {
@@ -162,11 +212,16 @@
   transform-origin: left;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px var(--gold-shadow);
+  z-index: 3;
 }
 
 .contact-info:hover {
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   border-color: rgba(229, 187, 72, 0.4);
+}
+
+.contact-info:hover::after {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .contact-info:hover::before {
