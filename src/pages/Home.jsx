@@ -145,56 +145,9 @@ function Home() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault()
-    
-    // Track form submission attempt
-    if (window.trackAnalytics) {
-      window.trackAnalytics.formSubmission('contact')
-    }
-    
-    // Validar formulário
-    const validation = validateForm(formData, 'contact')
-    
-    if (!validation.isValid) {
-      setFormErrors(validation.errors)
-      return
-    }
-    
-    setIsSubmitting(true)
-    
-    try {
-      const whatsappMessage = `Olá! Meu nome é ${formData.name}. ${formData.message} Telefone: ${formData.phone}`
-      const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
-      
-      // Track WhatsApp click
-      if (window.trackAnalytics) {
-        window.trackAnalytics.whatsappClick()
-      }
-      
-      window.location.href = whatsappUrl
-      
-      // Track successful lead
-      if (window.trackAnalytics) {
-        window.trackAnalytics.lead({
-          type: 'contact_form',
-          method: 'whatsapp'
-        })
-      }
-      
-      // Limpar formulário após envio
-      setFormData({
-        name: '',
-        phone: '',
-        message: ''
-      })
-      setFormErrors({})
-    } catch (error) {
-      console.error('Erro ao enviar formulário:', error)
-      setFormErrors({
-        submit: 'Erro ao enviar mensagem. Tente novamente.'
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    const whatsappMessage = `Olá! Meu nome é ${formData.name}. ${formData.message} Telefone: ${formData.phone}`
+    const whatsappUrl = `https://wa.me/5511977180367?text=${encodeURIComponent(whatsappMessage)}`
+    window.location.href = whatsappUrl
   }
 
   const handleEmailSubmit = async (e) => {
@@ -470,21 +423,6 @@ function Home() {
                   disabled={isSubmitting}
                 >
                   <span>{isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}</span>
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={handleEmailSubmit}
-                >
-                  Enviar por Email
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-link"
-                  onClick={handleForceWhatsApp}
-                  style={{ marginTop: 8, fontSize: '0.9rem' }}
-                >
-                  Ir direto para o WhatsApp
                 </button>
                 {formErrors.submit && (
                   <div className="error-message submit-error" role="alert">

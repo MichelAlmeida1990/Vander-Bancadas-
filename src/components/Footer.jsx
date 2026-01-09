@@ -52,7 +52,7 @@ function Footer() {
 
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Vander Porcelanato. Todos os direitos reservados.</p>
-          <a className="admin-access-link" href="/admin">Acesso Restrito</a>
+          <a className="admin-access-link" href="/admin/login">Acesso Restrito</a>
         </div>
       </div>
     </footer>

@@ -1,0 +1,101 @@
+.admin-login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/fundo-de-marmore-branco-e-dourado-de-luxo-premium-fundo-dourado-dourado-majestoso_388373-original.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px;
+}
+
+.admin-login-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.admin-login-card h1 {
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.admin-login-card p {
+  margin-bottom: 32px;
+  opacity: 0.8;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.admin-login-card .form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.admin-login-card label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: #555;
+  font-weight: 500;
+}
+
+.admin-login-card input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid #e1e1e1;
+  background: #fff;
+  color: #333;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.admin-login-card input:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.admin-login-card .error-message {
+  margin-bottom: 16px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+.admin-login-card .btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.admin-login-card .btn-primary {
+  background: linear-gradient(135deg, #d4af37, #b8941f);
+  border: none;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-login-card .btn-primary:hover {
+  background: linear-gradient(135deg, #b8941f, #a07d4a);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.admin-login-card .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
