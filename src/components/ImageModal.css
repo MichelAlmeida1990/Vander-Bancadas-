@@ -74,12 +74,6 @@
   padding: 0;
 }
 
-.image-modal-close:hover {
-  background: rgba(229, 187, 72, 0.2);
-  border-color: var(--primary);
-  color: var(--primary-light);
-  transform: scale(1.1);
-}
 
 .image-modal-prev,
 .image-modal-next {
@@ -112,13 +106,6 @@
   right: -70px;
 }
 
-.image-modal-prev:hover,
-.image-modal-next:hover {
-  background: rgba(229, 187, 72, 0.2);
-  border-color: var(--primary);
-  color: var(--primary-light);
-  transform: translateY(-50%) scale(1.1);
-}
 
 /* Tablet */
 @media (max-width: 1024px) {

@@ -198,7 +198,6 @@ button {
   *:hover {
     transform: none !important;
     box-shadow: inherit !important;
-    background: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
     opacity: inherit !important;

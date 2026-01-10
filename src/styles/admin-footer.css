@@ -28,9 +28,6 @@
   transition: color 0.2s;
 }
 
-.admin-footer .footer-links a:hover {
-  color: #D4A574;
-}
 
 .admin-footer .copyright {
   color: #4b5563;

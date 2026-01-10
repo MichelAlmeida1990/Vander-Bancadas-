@@ -357,7 +357,8 @@
 }
 
 .modal-content {
-  background: var(--white);
+  background: #2a2a2a;
+  color: #ffffff;
   border-radius: var(--radius-lg);
   padding: var(--space-8);
   max-width: 600px;
@@ -370,7 +371,7 @@
 .modal-content h2 {
   font-size: var(--text-2xl);
   font-weight: var(--font-semibold);
-  color: var(--gray-900);
+  color: #ffffff;
   margin: 0 0 var(--space-6) 0;
 }
 
@@ -389,14 +390,16 @@
 .form-group label {
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
-  color: var(--gray-700);
+  color: #e0e0e0;
   margin-bottom: var(--space-2);
 }
 
 .form-group input,
 .form-group select {
   padding: var(--space-3);
-  border: 1px solid var(--gray-300);
+  border: 1px solid #555555;
+  background: #404040;
+  color: #ffffff;
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   transition: all var(--transition-fast);

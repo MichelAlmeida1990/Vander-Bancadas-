@@ -311,7 +311,8 @@
 }
 
 .modal-content {
-  background: white;
+  background: #2a2a2a;
+  color: #ffffff;
   border-radius: 12px;
   padding: 32px;
   max-width: 500px;
@@ -322,7 +323,7 @@
 .modal-content h2 {
   font-size: 20px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #ffffff;
   margin: 0 0 24px 0;
 }
 
@@ -342,7 +343,9 @@
 .form input,
 .form select {
   padding: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #555555;
+  background: #404040;
+  color: #ffffff;
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s;

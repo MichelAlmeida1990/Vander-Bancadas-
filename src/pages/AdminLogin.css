@@ -89,11 +89,6 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.admin-login-card .btn-primary:hover {
-  background: linear-gradient(135deg, #b8941f, #a07d4a);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-}
 
 .admin-login-card .btn:disabled {
   opacity: 0.6;
