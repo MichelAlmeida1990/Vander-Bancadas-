@@ -176,8 +176,6 @@ button {
   *:hover {
     transform: none !important;
     box-shadow: inherit !important;
-    background: inherit !important;
-    color: inherit !important;
     border-color: inherit !important;
     opacity: inherit !important;
     filter: inherit !important;
@@ -198,7 +196,6 @@ button {
   *:hover {
     transform: none !important;
     box-shadow: inherit !important;
-    color: inherit !important;
     border-color: inherit !important;
     opacity: inherit !important;
     filter: inherit !important;
@@ -211,5 +208,17 @@ button {
     background: inherit !important;
     width: inherit !important;
     height: inherit !important;
+  }
+
+  /* Força texto branco em elementos do admin no mobile */
+  .dashboard *,
+  .modal-content *,
+  .client-card *,
+  .project-card *,
+  .stat-card *,
+  .chart-card *,
+  .summary-card *,
+  .idea-card * {
+    color: #ffffff !important;
   }
 }

@@ -11,14 +11,15 @@
   align-items: center;
   margin-bottom: var(--space-8);
   padding: var(--space-6);
-  background: var(--white);
+  background: #000000;
+  color: #ffffff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
 }
 
 .projects-header h1 {
   font-size: var(--text-3xl);
-  color: var(--gray-900);
+  color: #ffffff;
   margin: 0;
 }
 
@@ -74,10 +75,10 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-6);
-  background: var(--white);
+  background: #000000;
+  color: #ffffff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast);
 }
 
 .stat-card:hover {
@@ -116,8 +117,10 @@
 }
 
 .project-card {
-  background: var(--white);
+  background: #000000;
+  color: #ffffff;
   border-radius: var(--radius-lg);
+  padding: var(--space-6);
   box-shadow: var(--shadow-md);
   overflow: hidden;
   transition: all var(--transition-fast);
@@ -132,14 +135,15 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-6);
-  cursor: pointer;
-  border-bottom: 1px solid var(--gray-200);
+  background: #1a1a1a;
+  color: #ffffff;
+  border-bottom: 1px solid #333333;
 }
 
 .project-info h3 {
   font-size: var(--text-xl);
   font-weight: var(--font-semibold);
-  color: var(--gray-900);
+  color: #ffffff;
   margin: 0 0 var(--space-3) 0;
 }
 
@@ -154,7 +158,7 @@
   align-items: center;
   gap: var(--space-1);
   font-size: var(--text-sm);
-  color: var(--gray-600);
+  color: #ffffff;
 }
 
 .client svg,
@@ -169,6 +173,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--gray-100);
+  color: #ffffff;
 }
 
 .project-financial {
@@ -188,13 +193,13 @@
 
 .estimated {
   font-size: var(--text-sm);
-  color: var(--gray-600);
+  color: #ffffff;
 }
 
 .actual {
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
-  color: var(--success-color);
+  color: #ffffff;
 }
 
 .progress-bar {
@@ -213,11 +218,11 @@
 .progress-text {
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
-  color: var(--gray-700);
+  color: #ffffff;
 }
 
 .expand-icon {
-  color: var(--gray-400);
+  color: #ffffff;
   transition: color var(--transition-fast);
 }
 
@@ -228,13 +233,14 @@
 /* Project Phases */
 .project-phases {
   padding: var(--space-6);
-  background: var(--gray-50);
+  background: #000000;
+  color: #ffffff;
 }
 
 .project-phases h4 {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
-  color: var(--gray-900);
+  color: #ffffff;
   margin: 0 0 var(--space-4) 0;
 }
 
@@ -245,11 +251,11 @@
 }
 
 .phase-card {
-  background: var(--white);
+  background: #000000;
+  color: #ffffff;
   border-radius: var(--radius-md);
   padding: var(--space-4);
   border-left: 4px solid var(--gray-300);
-  transition: all var(--transition-fast);
 }
 
 .phase-card.in-progress {
@@ -272,7 +278,7 @@
 .phase-header h5 {
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
-  color: var(--gray-900);
+  color: #ffffff;
   margin: 0;
 }
 
@@ -287,7 +293,7 @@
 
 .phase-description {
   font-size: var(--text-sm);
-  color: var(--gray-600);
+  color: #ffffff;
   line-height: 1.5;
   margin: 0 0 var(--space-3) 0;
 }
@@ -305,7 +311,7 @@
   align-items: center;
   gap: var(--space-1);
   font-size: var(--text-xs);
-  color: var(--gray-600);
+  color: #ffffff;
 }
 
 .phase-actions {
@@ -357,7 +363,7 @@
 }
 
 .modal-content {
-  background: #2a2a2a;
+  background: #000000;
   color: #ffffff;
   border-radius: var(--radius-lg);
   padding: var(--space-8);
@@ -397,8 +403,8 @@
 .form-group input,
 .form-group select {
   padding: var(--space-3);
-  border: 1px solid #555555;
-  background: #404040;
+  border: 1px solid #333333;
+  background: #1a1a1a;
   color: #ffffff;
   border-radius: var(--radius-md);
   font-size: var(--text-base);
