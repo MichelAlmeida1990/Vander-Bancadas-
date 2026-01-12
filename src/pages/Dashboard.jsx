@@ -18,8 +18,20 @@ const createLocalDateForDashboard = (dateString) => {
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [dateRange, setDateRange] = useState('30d')
+  const [selectedProject, setSelectedProject] = useState(null)
+  const [showProjectModal, setShowProjectModal] = useState(false)
 
   const { clients, projects, setClients, setProjects } = useAdminData()
+
+  const openProjectModal = (project) => {
+    setSelectedProject(project)
+    setShowProjectModal(true)
+  }
+
+  const closeProjectModal = () => {
+    setSelectedProject(null)
+    setShowProjectModal(false)
+  }
 
   const deleteClient = (clientId) => {
     if (window.confirm('Tem certeza que deseja excluir este cliente? Todos os projetos associados também serão excluídos.')) {
@@ -51,28 +63,17 @@ const Dashboard = () => {
   const monthEnd = useMemo(() => endOfMonth(now), [now])
 
   const normalizedProjects = useMemo(() => {
-    console.log('=== DEBUG Dashboard normalizedProjects ===')
-    console.log('Projects brutos:', projects)
-    
     return projects.map((p) => {
-      const dateStr = p.endDate || p.startDate
-      console.log('Processando projeto:', p.name)
-      console.log('DateStr bruto:', dateStr)
+      const dateStr = p.startDate || p.endDate // Prioriza data de início
       
       // Usa a mesma função de correção de timezone do ProjectsSimple
       const date = dateStr ? createLocalDateForDashboard(dateStr) : null
-      console.log('Date processado:', date)
-      console.log('Date toString:', date?.toString())
-      console.log('Date toISOString:', date?.toISOString())
       
-      const result = {
+      return {
         ...p,
         date,
         client: p.clientName || ''
       }
-      console.log('Resultado final:', result)
-      console.log('---')
-      return result
     })
   }, [projects])
 
@@ -291,17 +292,8 @@ const Dashboard = () => {
                 return Array.from({ length: firstWeekday }).map((_, i) => <div key={`pad-${i}`} />)
               })()}
               {monthCalendarDays.map((day) => {
-                console.log('=== DEBUG Calendário ===')
-                console.log('Dia do calendário:', day.toString())
-                console.log('Dia ISO:', day.toISOString())
-                
                 const dayProjects = projectsThisMonth.filter((p) => {
                   const projectDate = p.date // Usa a data normalizada
-                  console.log('Comparando com projeto:', p.name)
-                  console.log('Data do projeto:', projectDate?.toString())
-                  console.log('Data do projeto ISO:', projectDate?.toISOString())
-                  console.log('isSameDay resultado:', projectDate && isSameDay(projectDate, day))
-                  console.log('---')
                   return projectDate && isSameDay(projectDate, day)
                 })
                 
@@ -621,6 +613,113 @@ const Dashboard = () => {
           <p>&copy; 2024 Vander Bancadas - Painel Administrativo</p>
         </div>
       </div>
+
+      {/* Modal de Projeto */}
+      {showProjectModal && selectedProject && (
+        <div className="modal-overlay" onClick={closeProjectModal}>
+          <div 
+            className="modal-content" 
+            onClick={(e) => e.stopPropagation()} 
+            style={{ 
+              background: 'rgba(30, 58, 138, 0.25)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ margin: 0, color: '#ffffff' }}>{selectedProject.name}</h2>
+              <button 
+                onClick={closeProjectModal}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  color: '#ffffff', 
+                  fontSize: 24, 
+                  cursor: 'pointer',
+                  padding: 0
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ display: 'grid', gap: 15, color: '#ffffff' }}>
+              <div>
+                <strong>Cliente:</strong> {selectedProject.clientName || 'Não informado'}
+              </div>
+              <div>
+                <strong>Categoria:</strong> {selectedProject.category || 'Não informada'}
+              </div>
+              <div>
+                <strong>Valor:</strong> R$ {(selectedProject.value || 0).toLocaleString('pt-BR')}
+              </div>
+              <div>
+                <strong>Data de Início:</strong> {selectedProject.startDate ? format(new Date(selectedProject.startDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+              </div>
+              <div>
+                <strong>Data de Término:</strong> {selectedProject.endDate ? format(new Date(selectedProject.endDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+              </div>
+              <div>
+                <strong>Status:</strong> 
+                <span style={{ 
+                  marginLeft: 8, 
+                  padding: '4px 8px', 
+                  borderRadius: 4, 
+                  fontSize: 12,
+                  background: selectedProject.status === 'completed' ? '#28a745' : 
+                              selectedProject.status === 'in-progress' ? '#ffc107' : '#6c757d',
+                  color: '#ffffff'
+                }}>
+                  {selectedProject.status === 'completed' ? 'Concluído' : 
+                   selectedProject.status === 'in-progress' ? 'Em Andamento' : 'Pendente'}
+                </span>
+              </div>
+              <div>
+                <strong>Pagamento:</strong> 
+                <span style={{ 
+                  marginLeft: 8, 
+                  padding: '4px 8px', 
+                  borderRadius: 4, 
+                  fontSize: 12,
+                  background: selectedProject.paid ? '#28a745' : '#dc3545',
+                  color: '#ffffff'
+                }}>
+                  {selectedProject.paid ? 'Pago' : 'Pendente'}
+                </span>
+              </div>
+            </div>
+            
+            <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <button 
+                onClick={closeProjectModal}
+                style={{ 
+                  padding: '10px 20px', 
+                  border: '1px solid rgba(255, 255, 255, 0.3)', 
+                  background: 'rgba(255, 255, 255, 0.1)', 
+                  backdropFilter: 'blur(5px)',
+                  WebkitBackdropFilter: 'blur(5px)',
+                  color: '#ffffff', 
+                  borderRadius: 8, 
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                }}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
