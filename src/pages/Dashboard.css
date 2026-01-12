@@ -3,6 +3,33 @@
   padding: var(--space-6);
   background: var(--gray-100);
   min-height: 100vh;
+  color: #ffffff; /* Garante texto branco padrão */
+}
+
+/* Garante que todo texto seja branco */
+.dashboard * {
+  color: #ffffff !important;
+}
+
+/* Exceções para elementos específicos que precisam de outras cores */
+.dashboard .change.positive {
+  color: var(--success-color) !important;
+}
+
+.dashboard .change.negative {
+  color: var(--danger-color) !important;
+}
+
+.dashboard .status.completed {
+  color: var(--success-color) !important;
+}
+
+.dashboard .status.in-progress {
+  color: var(--warning-color) !important;
+}
+
+.dashboard .status.pending {
+  color: var(--secondary-color) !important;
 }
 
 .dashboard-header {
