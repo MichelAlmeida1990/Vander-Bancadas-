@@ -42,6 +42,7 @@ export function AdminDataProvider({ children }) {
       // 2) Migração do localStorage antigo (se existir)
       const raw = localStorage.getItem(STORAGE_KEY)
       const parsed = raw ? safeParse(raw) : null
+      
       if (parsed && Array.isArray(parsed.clients) && Array.isArray(parsed.projects)) {
         setClients(parsed.clients)
         setProjects(parsed.projects)

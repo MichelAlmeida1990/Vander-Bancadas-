@@ -168,21 +168,21 @@
 
 .project-name {
   font-weight: 600;
-  color: #ffffff;
+  color: #333333;
   font-size: 14px;
 }
 
 .project-category {
   font-size: 12px;
-  color: #ffffff;
+  color: #666666;
 }
 
 .client-info {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #ffffff;
-  font-size: 14px;
+  color: #333333;
+  font-size: 13px;
 }
 
 .value {
@@ -282,22 +282,19 @@
   border-color: #fecaca;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
+.icon-btn.pdf-btn {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
 }
 
-.modal {
+.icon-btn.pdf-btn:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+/* Modal */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -319,6 +316,8 @@
   max-width: 500px;
   width: 100%;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1001;
 }
 
 .modal-content h2 {

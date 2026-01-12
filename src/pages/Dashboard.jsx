@@ -4,8 +4,16 @@ import { DollarSign, TrendingUp, Users, Calendar, FileText, AlertCircle, CheckCi
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import './Dashboard.css'
-import '../styles/admin-footer.css'
-import { useAdminData } from '../context/AdminDataContext.jsx'
+import { useAdminData } from '../context/AdminDataContext'
+
+// Função para criar data local sem problemas de timezone (mesma do ProjectsSimple)
+const createLocalDateForDashboard = (dateString) => {
+  if (!dateString) return null
+  // Converte YYYY-MM-DD para Date
+  const [year, month, day] = dateString.split('-')
+  // Cria data sem complicações de timezone
+  return new Date(year, month - 1, day)
+}
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview')
@@ -43,14 +51,28 @@ const Dashboard = () => {
   const monthEnd = useMemo(() => endOfMonth(now), [now])
 
   const normalizedProjects = useMemo(() => {
+    console.log('=== DEBUG Dashboard normalizedProjects ===')
+    console.log('Projects brutos:', projects)
+    
     return projects.map((p) => {
       const dateStr = p.endDate || p.startDate
-      const date = dateStr ? new Date(dateStr) : null
-      return {
+      console.log('Processando projeto:', p.name)
+      console.log('DateStr bruto:', dateStr)
+      
+      // Usa a mesma função de correção de timezone do ProjectsSimple
+      const date = dateStr ? createLocalDateForDashboard(dateStr) : null
+      console.log('Date processado:', date)
+      console.log('Date toString:', date?.toString())
+      console.log('Date toISOString:', date?.toISOString())
+      
+      const result = {
         ...p,
         date,
         client: p.clientName || ''
       }
+      console.log('Resultado final:', result)
+      console.log('---')
+      return result
     })
   }, [projects])
 
@@ -269,7 +291,20 @@ const Dashboard = () => {
                 return Array.from({ length: firstWeekday }).map((_, i) => <div key={`pad-${i}`} />)
               })()}
               {monthCalendarDays.map((day) => {
-                const dayProjects = projectsThisMonth.filter((p) => p.date && isSameDay(p.date, day))
+                console.log('=== DEBUG Calendário ===')
+                console.log('Dia do calendário:', day.toString())
+                console.log('Dia ISO:', day.toISOString())
+                
+                const dayProjects = projectsThisMonth.filter((p) => {
+                  const projectDate = p.date // Usa a data normalizada
+                  console.log('Comparando com projeto:', p.name)
+                  console.log('Data do projeto:', projectDate?.toString())
+                  console.log('Data do projeto ISO:', projectDate?.toISOString())
+                  console.log('isSameDay resultado:', projectDate && isSameDay(projectDate, day))
+                  console.log('---')
+                  return projectDate && isSameDay(projectDate, day)
+                })
+                
                 return (
                   <div
                     key={day.toISOString()}
@@ -278,8 +313,10 @@ const Dashboard = () => {
                       borderRadius: 10,
                       border: '1px solid rgba(255,255,255,0.08)',
                       background: dayProjects.length ? 'rgba(212, 165, 116, 0.12)' : 'rgba(255,255,255,0.03)',
-                      minHeight: 64
+                      minHeight: 64,
+                      cursor: dayProjects.length > 0 ? 'pointer' : 'default'
                     }}
+                    onClick={() => dayProjects.length > 0 && openProjectModal(dayProjects[0])}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                       <span style={{ fontWeight: 700 }}>{day.getDate()}</span>

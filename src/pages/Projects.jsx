@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Eye, Calendar, DollarSign, User, Clock, CheckCircle, AlertCircle, TrendingUp, FileText, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Calendar, DollarSign, User, Clock, CheckCircle, AlertCircle, TrendingUp, FileText, ChevronDown, ChevronUp, Download } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import './Projects.css'
+import { useAdminData } from '../context/AdminDataContext.jsx'
 
 const Projects = () => {
-  const [projects, setProjects] = useState([])
-  const [clients, setClients] = useState([])
+  const { clients, projects, addClient, addProject, updateProject, deleteProject: deleteProjectFromStore } = useAdminData()
   const [showNewProject, setShowNewProject] = useState(false)
   const [showNewClient, setShowNewClient] = useState(false)
   const [expandedProjects, setExpandedProjects] = useState({})
@@ -73,20 +75,6 @@ const Projects = () => {
     }
   ]
 
-  useEffect(() => {
-    // Carregar dados do localStorage ou API
-    const savedClients = localStorage.getItem('vander_clients')
-    const savedProjects = localStorage.getItem('vander_projects')
-    
-    if (savedClients) {
-      setClients(JSON.parse(savedClients))
-    }
-    
-    if (savedProjects) {
-      setProjects(JSON.parse(savedProjects))
-    }
-  }, [])
-
   const toggleProjectExpansion = (projectId) => {
     setExpandedProjects(prev => ({
       ...prev,
@@ -100,11 +88,12 @@ const Projects = () => {
       return
     }
 
-    const newProject = {
-      id: projects.length + 1,
+    const selectedClient = clients.find(c => c.id === parseInt(formData.clientId))
+
+    addProject({
       name: formData.name,
       clientId: parseInt(formData.clientId),
-      clientName: clients.find(c => c.id === parseInt(formData.clientId))?.name || '',
+      clientName: selectedClient?.name || 'Cliente não encontrado',
       category: formData.category,
       estimatedValue: parseFloat(formData.estimatedValue),
       actualValue: null,
@@ -118,11 +107,7 @@ const Projects = () => {
         completedDate: null,
         actualCost: null
       }))
-    }
-
-    const updatedProjects = [...projects, newProject]
-    setProjects(updatedProjects)
-    localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+    })
     
     setShowNewProject(false)
     setFormData({
@@ -143,20 +128,13 @@ const Projects = () => {
       return
     }
 
-    const newClient = {
-      id: clients.length + 1,
+    addClient({
       name: formData.clientName,
       email: formData.clientEmail,
       phone: formData.clientPhone,
       address: formData.clientAddress,
-      type: formData.clientType,
-      projects: 0,
-      totalValue: 0
-    }
-
-    const updatedClients = [...clients, newClient]
-    setClients(updatedClients)
-    localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+      type: formData.clientType
+    })
     
     setShowNewClient(false)
     setFormData({
@@ -170,67 +148,57 @@ const Projects = () => {
   }
 
   const updatePhaseStatus = (projectId, phaseId, newStatus) => {
-    const updatedProjects = projects.map(project => {
-      if (project.id === projectId) {
-        const updatedPhases = project.phases.map(phase => {
-          if (phase.id === phaseId) {
-            return {
-              ...phase,
-              status: newStatus,
-              completedDate: newStatus === 'completed' ? new Date().toISOString().split('T')[0] : null,
-              actualCost: newStatus === 'completed' ? (project.estimatedValue * phase.percentage / 100) : null
-            }
-          }
-          return phase
-        })
+    const project = projects.find(p => p.id === projectId)
+    if (!project) return
 
-        // Atualizar status do projeto baseado nas fases
-        const completedPhases = updatedPhases.filter(p => p.status === 'completed').length
-        const totalPhases = updatedPhases.length
-        let newProjectStatus = 'pending'
-        
-        if (completedPhases === totalPhases) {
-          newProjectStatus = 'completed'
-        } else if (completedPhases > 0) {
-          newProjectStatus = 'in-progress'
-        }
-
+    const updatedPhases = project.phases.map(phase => {
+      if (phase.id === phaseId) {
         return {
-          ...project,
-          phases: updatedPhases,
-          status: newProjectStatus,
-          actualValue: newProjectStatus === 'completed' ? 
-            updatedPhases.reduce((sum, phase) => sum + (phase.actualCost || 0), 0) : 
-            project.actualValue
+          ...phase,
+          status: newStatus,
+          completedDate: newStatus === 'completed' ? new Date().toISOString().split('T')[0] : null,
+          actualCost: newStatus === 'completed' ? (project.estimatedValue * phase.percentage / 100) : null
         }
       }
-      return project
+      return phase
     })
 
-    setProjects(updatedProjects)
-    localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+    // Atualizar status do projeto baseado nas fases
+    const completedPhases = updatedPhases.filter(p => p.status === 'completed').length
+    const totalPhases = updatedPhases.length
+    let newProjectStatus = 'pending'
+    
+    if (completedPhases === totalPhases) {
+      newProjectStatus = 'completed'
+    } else if (completedPhases > 0) {
+      newProjectStatus = 'in-progress'
+    }
+
+    const actualValue = newProjectStatus === 'completed' ? 
+      updatedPhases.reduce((sum, phase) => sum + (phase.actualCost || 0), 0) : 
+      project.actualValue
+
+    updateProject(projectId, {
+      phases: updatedPhases,
+      status: newProjectStatus,
+      actualValue
+    })
   }
 
   const deleteClient = (clientId) => {
     if (window.confirm('Tem certeza que deseja excluir este cliente? Todos os projetos associados também serão excluídos.')) {
-      // Remover projetos associados ao cliente
-      const updatedProjects = projects.filter(p => p.clientId !== clientId)
-      // Remover o cliente
-      const updatedClients = clients.filter(c => c.id !== clientId)
-      
-      setProjects(updatedProjects)
-      setClients(updatedClients)
-      
-      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
-      localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+      // O context já cuida de remover os projetos associados
+      // Precisamos implementar no context ou fazer manualmente aqui
+      const clientProjects = projects.filter(p => p.clientId === clientId)
+      clientProjects.forEach(project => {
+        deleteProjectFromStore(project.id)
+      })
     }
   }
 
   const deleteProject = (projectId) => {
     if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
-      const updatedProjects = projects.filter(p => p.id !== projectId)
-      setProjects(updatedProjects)
-      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+      deleteProjectFromStore(projectId)
     }
   }
 
@@ -253,16 +221,134 @@ const Projects = () => {
   }
 
   const getPhaseProgress = (phases) => {
+    if (!phases || phases.length === 0) return 0
     const completed = phases.filter(p => p.status === 'completed').length
     return Math.round((completed / phases.length) * 100)
   }
 
   const getFinancialImpact = (project) => {
     if (project.status === 'completed') {
-      return project.actualValue || 0
+      return project.actualValue || project.estimatedValue || 0
     }
-    const completedPhases = project.phases.filter(p => p.status === 'completed')
+    const completedPhases = project.phases?.filter(p => p.status === 'completed') || []
     return completedPhases.reduce((sum, phase) => sum + (phase.actualCost || 0), 0)
+  }
+
+  const exportProjectToPDF = async (project) => {
+    try {
+      // Criar um elemento HTML temporário para o orçamento
+      const budgetElement = document.createElement('div')
+      budgetElement.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 800px;
+        padding: 40px;
+        background: white;
+        font-family: Arial, sans-serif;
+        color: #333;
+      `
+      
+      const client = clients.find(c => c.id === project.clientId)
+      
+      budgetElement.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #D4A574; padding-bottom: 20px;">
+          <h1 style="color: #D4A574; margin: 0; font-size: 28px;">Vander Bancadas</h1>
+          <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em Bancadas de Porcelanato</p>
+          <p style="margin: 5px 0; color: #666; font-size: 12px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_porcelanatos</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h2 style="color: #333; margin-bottom: 10px;">Orçamento de Projeto</h2>
+          <p style="margin: 5px 0;"><strong>Projeto:</strong> ${project.name}</p>
+          <p style="margin: 5px 0;"><strong>Cliente:</strong> ${client?.name || 'Não informado'}</p>
+          <p style="margin: 5px 0;"><strong>Categoria:</strong> ${project.category || 'Não informada'}</p>
+          <p style="margin: 5px 0;"><strong>Data:</strong> ${format(new Date(), 'dd/MM/yyyy', { locale: ptBR })}</p>
+          <p style="margin: 5px 0;"><strong>Status:</strong> ${getStatusText(project.status)}</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 15px;">Valores</h3>
+          <p style="margin: 5px 0; font-size: 16px;"><strong>Valor Orçado:</strong> R$ ${project.estimatedValue.toLocaleString('pt-BR')}</p>
+          ${project.actualValue ? `<p style="margin: 5px 0; font-size: 16px;"><strong>Valor Real:</strong> R$ ${project.actualValue.toLocaleString('pt-BR')}</p>` : ''}
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 15px;">Fases do Projeto</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f5f5f5;">
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Fase</th>
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">%</th>
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Status</th>
+                <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${project.phases.map(phase => `
+                <tr>
+                  <td style="border: 1px solid #ddd; padding: 10px;">${phase.name}</td>
+                  <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${phase.percentage}%</td>
+                  <td style="border: 1px solid #ddd; padding: 10px;">${getStatusText(phase.status)}</td>
+                  <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">
+                    ${phase.actualCost ? `R$ ${phase.actualCost.toLocaleString('pt-BR')}` : '-'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        
+        ${project.phases.filter(p => p.status === 'completed').length > 0 ? `
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 15px;">Resumo Financeiro</h3>
+          <p style="margin: 5px 0;"><strong>Total Concluído:</strong> ${project.phases.filter(p => p.status === 'completed').length} de ${project.phases.length} fases</p>
+          <p style="margin: 5px 0;"><strong>Valor Investido:</strong> R$ ${getFinancialImpact(project).toLocaleString('pt-BR')}</p>
+          <p style="margin: 5px 0;"><strong>Progresso:</strong> ${getPhaseProgress(project.phases)}%</p>
+        </div>
+        ` : ''}
+        
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 12px;">
+          <p>Vander Porcelanato - Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional</p>
+          <p>Atendimento em toda a Grande São Paulo</p>
+        </div>
+      `
+      
+      document.body.appendChild(budgetElement)
+      
+      // Capturar o elemento como imagem
+      const canvas = await html2canvas(budgetElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      })
+      
+      // Criar o PDF
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgData = canvas.toDataURL('image/png')
+      
+      // Calcular dimensões para caber na página A4
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95
+      const imgX = (pdfWidth - imgWidth * ratio) / 2
+      const imgY = 10
+      
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio)
+      
+      // Salvar o PDF
+      const fileName = `orcamento_${project.name.replace(/[^a-z0-9]/gi, '_')}_${format(new Date(), 'dd-MM-yyyy')}.pdf`
+      pdf.save(fileName)
+      
+      // Remover elemento temporário
+      document.body.removeChild(budgetElement)
+      
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error)
+      alert('Ocorreu um erro ao gerar o PDF. Tente novamente.')
+    }
   }
 
   return (
@@ -325,95 +411,114 @@ const Projects = () => {
 
       {/* Lista de Projetos */}
       <div className="projects-list">
-        {projects.map(project => (
-          <div key={project.id} className="project-card">
-            <div className="project-header" onClick={() => toggleProjectExpansion(project.id)}>
-              <div className="project-info">
-                <h3>{project.name}</h3>
-                <div className="project-meta">
-                  <span className="client">
-                    <User size={14} />
-                    {project.clientName}
-                  </span>
-                  <span className="category">{project.category}</span>
-                  <span className="status" style={{ color: getStatusColor(project.status) }}>
-                    {getStatusText(project.status)}
-                  </span>
-                </div>
-              </div>
-              <div className="project-financial">
-                <div className="values">
-                  <span className="estimated">Orçado: R$ {project.estimatedValue.toLocaleString('pt-BR')}</span>
-                  {project.actualValue && (
-                    <span className="actual">Real: R$ {project.actualValue.toLocaleString('pt-BR')}</span>
-                  )}
-                </div>
-                <div className="progress-bar">
-                  <div 
-                    className="progress-fill" 
-                    style={{ 
-                      width: `${getPhaseProgress(project.phases)}%`,
-                      backgroundColor: getStatusColor(project.status)
-                    }}
-                  />
-                </div>
-                <span className="progress-text">{getPhaseProgress(project.phases)}%</span>
-              </div>
-              <div className="expand-icon">
-                {expandedProjects[project.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </div>
-            </div>
-
-            {/* Fases do Projeto */}
-            {expandedProjects[project.id] && (
-              <div className="project-phases">
-                <h4>Fases do Projeto</h4>
-                <div className="phases-grid">
-                  {project.phases.map(phase => (
-                    <div key={phase.id} className={`phase-card ${phase.status}`}>
-                      <div className="phase-header">
-                        <h5>{phase.name}</h5>
-                        <span className="percentage">{phase.percentage}%</span>
-                      </div>
-                      <p className="phase-description">{phase.description}</p>
-                      <div className="phase-details">
-                        {phase.completedDate && (
-                          <span className="completed-date">
-                            <Calendar size={12} />
-                            {format(new Date(phase.completedDate), 'dd/MM/yyyy', { locale: ptBR })}
-                          </span>
-                        )}
-                        {phase.actualCost && (
-                          <span className="cost">
-                            <DollarSign size={12} />
-                            R$ {phase.actualCost.toLocaleString('pt-BR')}
-                          </span>
-                        )}
-                      </div>
-                      <div className="phase-actions">
-                        {phase.status !== 'completed' && (
-                          <button 
-                            className="btn-complete"
-                            onClick={() => updatePhaseStatus(project.id, phase.id, 'completed')}
-                          >
-                            <CheckCircle size={14} />
-                            Concluir
-                          </button>
-                        )}
-                        {phase.status === 'completed' && (
-                          <span className="completed-badge">
-                            <CheckCircle size={14} />
-                            Concluído
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        {projects.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <p>Nenhum projeto encontrado. Crie seu primeiro projeto!</p>
           </div>
-        ))}
+        ) : (
+          projects.map(project => (
+            <div key={project.id} className="project-card">
+              <div className="project-header" onClick={() => toggleProjectExpansion(project.id)}>
+                <div className="project-info">
+                  <h3>{project.name || 'Sem nome'}</h3>
+                  <div className="project-meta">
+                    <span className="client">
+                      <User size={14} />
+                      {project.clientName || 'Cliente não encontrado'}
+                    </span>
+                    <span className="category">{project.category || 'Sem categoria'}</span>
+                    <span className="status" style={{ color: getStatusColor(project.status) }}>
+                      {getStatusText(project.status)}
+                    </span>
+                  </div>
+                </div>
+                <div className="project-financial">
+                  <div className="values">
+                    <span className="estimated">Orçado: R$ {project.estimatedValue?.toLocaleString('pt-BR') || '0'}</span>
+                    {project.actualValue && (
+                      <span className="actual">Real: R$ {project.actualValue.toLocaleString('pt-BR')}</span>
+                    )}
+                  </div>
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ 
+                        width: `${getPhaseProgress(project.phases)}%`,
+                        backgroundColor: getStatusColor(project.status)
+                      }}
+                    />
+                  </div>
+                  <span className="progress-text">{getPhaseProgress(project.phases)}%</span>
+                </div>
+                <div className="project-actions">
+                  <button 
+                    className="btn-export-pdf"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      exportProjectToPDF(project)
+                    }}
+                    title="Exportar Orçamento PDF"
+                  >
+                    <Download size={16} />
+                    PDF
+                  </button>
+                  <div className="expand-icon">
+                    {expandedProjects[project.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </div>
+                </div>
+              </div>
+
+              {/* Fases do Projeto */}
+              {expandedProjects[project.id] && project.phases && (
+                <div className="project-phases">
+                  <h4>Fases do Projeto</h4>
+                  <div className="phases-grid">
+                    {project.phases.map(phase => (
+                      <div key={phase.id} className={`phase-card ${phase.status}`}>
+                        <div className="phase-header">
+                          <h5>{phase.name}</h5>
+                          <span className="percentage">{phase.percentage}%</span>
+                        </div>
+                        <p className="phase-description">{phase.description}</p>
+                        <div className="phase-details">
+                          {phase.completedDate && (
+                            <span className="completed-date">
+                              <Calendar size={12} />
+                              {format(new Date(phase.completedDate), 'dd/MM/yyyy', { locale: ptBR })}
+                            </span>
+                          )}
+                          {phase.actualCost && (
+                            <span className="cost">
+                              <DollarSign size={12} />
+                              R$ {phase.actualCost.toLocaleString('pt-BR')}
+                            </span>
+                          )}
+                        </div>
+                        <div className="phase-actions">
+                          {phase.status !== 'completed' && (
+                            <button 
+                              className="btn-complete"
+                              onClick={() => updatePhaseStatus(project.id, phase.id, 'completed')}
+                            >
+                              <CheckCircle size={14} />
+                              Concluir
+                            </button>
+                          )}
+                          {phase.status === 'completed' && (
+                            <span className="completed-badge">
+                              <CheckCircle size={14} />
+                              Concluído
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal Novo Projeto */}
