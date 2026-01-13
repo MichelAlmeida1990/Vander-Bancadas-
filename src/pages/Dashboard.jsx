@@ -23,8 +23,10 @@ const Dashboard = () => {
 
   const { clients, projects, setClients, setProjects } = useAdminData()
 
-  const openProjectModal = (project) => {
-    setSelectedProject(project)
+  const openProjectModal = (projects) => {
+    // Extrai a data do calendário do último item
+    const calendarDate = projects.find(p => p.calendarDate)?.calendarDate
+    setSelectedProject({ projects, calendarDate })
     setShowProjectModal(true)
   }
 
@@ -308,7 +310,12 @@ const Dashboard = () => {
                       minHeight: 64,
                       cursor: dayProjects.length > 0 ? 'pointer' : 'default'
                     }}
-                    onClick={() => dayProjects.length > 0 && openProjectModal(dayProjects[0])}
+                    onClick={() => {
+                    if (dayProjects.length > 0) {
+                      const projectsWithDate = [...dayProjects, { calendarDate: day }]
+                      openProjectModal(projectsWithDate)
+                    }
+                  }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                       <span style={{ fontWeight: 700 }}>{day.getDate()}</span>
@@ -625,11 +632,19 @@ const Dashboard = () => {
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.18)',
-              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+              maxWidth: '600px',
+              maxHeight: '80vh',
+              overflow: 'auto'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ margin: 0, color: '#ffffff' }}>{selectedProject.name}</h2>
+              <h2 style={{ margin: 0, color: '#ffffff' }}>
+                {selectedProject.projects 
+                  ? `${selectedProject.projects.length} Projeto(s) - ${format(selectedProject.calendarDate || new Date(), 'dd/MM/yyyy', { locale: ptBR })}`
+                  : selectedProject.name
+                }
+              </h2>
               <button 
                 onClick={closeProjectModal}
                 style={{ 
@@ -645,51 +660,119 @@ const Dashboard = () => {
               </button>
             </div>
             
-            <div style={{ display: 'grid', gap: 15, color: '#ffffff' }}>
-              <div>
-                <strong>Cliente:</strong> {selectedProject.clientName || 'Não informado'}
+            {selectedProject.projects ? (
+              // Lista de múltiplos projetos
+              <div style={{ display: 'grid', gap: 15 }}>
+                {selectedProject.projects.map((project, index) => {
+                  return (
+                  <div 
+                    key={project.id}
+                    style={{ 
+                      padding: 15, 
+                      background: 'rgba(255, 255, 255, 0.05)', 
+                      borderRadius: 8, 
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: '#ffffff'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                      <h3 style={{ margin: 0, color: '#ffffff', fontSize: 16 }}>
+                        {project.name}
+                      </h3>
+                      <span style={{ 
+                        padding: '4px 8px', 
+                        borderRadius: 4, 
+                        fontSize: 11,
+                        background: project.status === 'completed' ? '#28a745' : 
+                                    project.status === 'in-progress' ? '#ffc107' : '#6c757d',
+                        color: '#ffffff'
+                      }}>
+                        {project.status === 'completed' ? 'Concluído' : 
+                         project.status === 'in-progress' ? 'Em Andamento' : 'Pendente'}
+                      </span>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 14 }}>
+                      <div>
+                        <strong>Cliente:</strong> {project.clientName || 'Não informado'}
+                      </div>
+                      <div>
+                        <strong>Valor:</strong> R$ {(project.value || 0).toLocaleString('pt-BR')}
+                      </div>
+                      <div>
+                        <strong>Início:</strong> {project.startDate ? format(createLocalDateForDashboard(project.startDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+                      </div>
+                      <div>
+                        <strong>Término:</strong> {project.endDate ? format(createLocalDateForDashboard(project.endDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ 
+                        padding: '4px 8px', 
+                        borderRadius: 4, 
+                        fontSize: 11,
+                        background: project.paid ? '#28a745' : '#dc3545',
+                        color: '#ffffff'
+                      }}>
+                        {project.paid ? '✓ Pago' : '○ Pendente'}
+                      </span>
+                      <span style={{ fontSize: 12, opacity: 0.7 }}>
+                        {project.category || 'Sem categoria'}
+                      </span>
+                    </div>
+                  </div>
+                  )
+                })}
               </div>
-              <div>
-                <strong>Categoria:</strong> {selectedProject.category || 'Não informada'}
+            ) : (
+              // Projeto único (mantém o layout original)
+              <div style={{ display: 'grid', gap: 15, color: '#ffffff' }}>
+                <div>
+                  <strong>Cliente:</strong> {selectedProject.clientName || 'Não informado'}
+                </div>
+                <div>
+                  <strong>Categoria:</strong> {selectedProject.category || 'Não informada'}
+                </div>
+                <div>
+                  <strong>Valor:</strong> R$ {(selectedProject.value || 0).toLocaleString('pt-BR')}
+                </div>
+                <div>
+                  <strong>Data de Início:</strong> {selectedProject.startDate ? format(new Date(selectedProject.startDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+                </div>
+                <div>
+                  <strong>Data de Término:</strong> {selectedProject.endDate ? format(new Date(selectedProject.endDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
+                </div>
+                <div>
+                  <strong>Status:</strong> 
+                  <span style={{ 
+                    marginLeft: 8, 
+                    padding: '4px 8px', 
+                    borderRadius: 4, 
+                    fontSize: 12,
+                    background: selectedProject.status === 'completed' ? '#28a745' : 
+                                selectedProject.status === 'in-progress' ? '#ffc107' : '#6c757d',
+                    color: '#ffffff'
+                  }}>
+                    {selectedProject.status === 'completed' ? 'Concluído' : 
+                     selectedProject.status === 'in-progress' ? 'Em Andamento' : 'Pendente'}
+                  </span>
+                </div>
+                <div>
+                  <strong>Pagamento:</strong> 
+                  <span style={{ 
+                    marginLeft: 8, 
+                    padding: '4px 8px', 
+                    borderRadius: 4, 
+                    fontSize: 12,
+                    background: selectedProject.paid ? '#28a745' : '#dc3545',
+                    color: '#ffffff'
+                  }}>
+                    {selectedProject.paid ? 'Pago' : 'Pendente'}
+                  </span>
+                </div>
               </div>
-              <div>
-                <strong>Valor:</strong> R$ {(selectedProject.value || 0).toLocaleString('pt-BR')}
-              </div>
-              <div>
-                <strong>Data de Início:</strong> {selectedProject.startDate ? format(new Date(selectedProject.startDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
-              </div>
-              <div>
-                <strong>Data de Término:</strong> {selectedProject.endDate ? format(new Date(selectedProject.endDate), 'dd/MM/yyyy', { locale: ptBR }) : 'Não definida'}
-              </div>
-              <div>
-                <strong>Status:</strong> 
-                <span style={{ 
-                  marginLeft: 8, 
-                  padding: '4px 8px', 
-                  borderRadius: 4, 
-                  fontSize: 12,
-                  background: selectedProject.status === 'completed' ? '#28a745' : 
-                              selectedProject.status === 'in-progress' ? '#ffc107' : '#6c757d',
-                  color: '#ffffff'
-                }}>
-                  {selectedProject.status === 'completed' ? 'Concluído' : 
-                   selectedProject.status === 'in-progress' ? 'Em Andamento' : 'Pendente'}
-                </span>
-              </div>
-              <div>
-                <strong>Pagamento:</strong> 
-                <span style={{ 
-                  marginLeft: 8, 
-                  padding: '4px 8px', 
-                  borderRadius: 4, 
-                  fontSize: 12,
-                  background: selectedProject.paid ? '#28a745' : '#dc3545',
-                  color: '#ffffff'
-                }}>
-                  {selectedProject.paid ? 'Pago' : 'Pendente'}
-                </span>
-              </div>
-            </div>
+            )}
             
             <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
               <button 
