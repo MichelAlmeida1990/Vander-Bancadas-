@@ -5,6 +5,7 @@ import { ptBR } from 'date-fns/locale'
 import { useLocation } from 'react-router-dom'
 import './ProjectsClean.css'
 import '../styles/admin-footer.css'
+import '../styles/categories.css'
 import { useAdminData } from '../context/AdminDataContext.jsx'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -63,12 +64,12 @@ function ProjectsSimple() {
   const [formData, setFormData] = useState({
     name: '',
     clientId: '',
-    category: '',
+    category: [], // Array para múltiplas categorias
     value: '',
     startDate: '',
     endDate: '',
-    clientName: '',
-    clientEmail: '',
+    clientName: '', 
+    clientEmail: '', 
     clientPhone: ''
   })
 
@@ -236,7 +237,7 @@ function ProjectsSimple() {
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #D4A574;">
             <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Projeto:</strong> <span style="color: #555;">${project.name || 'Não informado'}</span></p>
             <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Cliente:</strong> <span style="color: #555;">${project.clientName || 'Não informado'}</span></p>
-            <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Categoria:</strong> <span style="color: #555;">${project.category || 'Não informada'}</span></p>
+            <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Categoria:</strong> <span style="color: #555;">${Array.isArray(project.category) ? project.category.join(', ') : (project.category || 'Não informada')}</span></p>
             <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Data da Proposta:</strong> <span style="color: #555;">${format(new Date(), 'dd/MM/yyyy', { locale: ptBR })}</span></p>
             <p style="margin: 8px 0; font-size: 15px;"><strong style="color: #333;">Status:</strong> <span style="color: ${statusColor}; font-weight: 600; padding: 4px 12px; background: ${statusColor}20; border-radius: 20px; font-size: 13px;">${statusText}</span></p>
           </div>
@@ -630,7 +631,7 @@ function ProjectsSimple() {
                 <td>
                   <div className="project-info">
                     <div className="project-name">{project.name || 'Sem nome'}</div>
-                    <div className="project-category">{project.category || 'Sem categoria'}</div>
+                    <div className="project-category">{Array.isArray(project.category) ? project.category.join(', ') : (project.category || 'Sem categoria')}</div>
                   </div>
                 </td>
                 <td>
@@ -767,15 +768,86 @@ function ProjectsSimple() {
                 </select>
               </div>
               <div className="form-row">
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
-                >
-                  <option value="">Categoria</option>
-                  <option value="Cozinha">Cozinha</option>
-                  <option value="Banheiro">Banheiro</option>
-                  <option value="Área Gourmet">Área Gourmet</option>
-                </select>
+                <div className="form-row" style={{flexDirection: 'column'}}>
+                  <label style={{marginBottom: '10px', fontWeight: 'bold', color: '#333'}}>Categorias (selecione uma ou mais):</label>
+                  <div style={{display: 'flex', flexWrap: 'wrap', gap: '15px'}}>
+                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                      <input
+                        type="checkbox"
+                        value="Nicho"
+                        checked={formData.category.includes('Nicho')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, category: [...formData.category, 'Nicho']})
+                          } else {
+                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Nicho')})
+                          }
+                        }}
+                      />
+                      <span style={{marginLeft: '5px'}}>Nicho</span>
+                    </label>
+                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                      <input
+                        type="checkbox"
+                        value="Prateleira"
+                        checked={formData.category.includes('Prateleira')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, category: [...formData.category, 'Prateleira']})
+                          } else {
+                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Prateleira')})
+                          }
+                        }}
+                      />
+                      <span style={{marginLeft: '5px'}}>Prateleira</span>
+                    </label>
+                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                      <input
+                        type="checkbox"
+                        value="Cozinha"
+                        checked={formData.category.includes('Cozinha')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, category: [...formData.category, 'Cozinha']})
+                          } else {
+                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Cozinha')})
+                          }
+                        }}
+                      />
+                      <span style={{marginLeft: '5px'}}>Cozinha</span>
+                    </label>
+                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                      <input
+                        type="checkbox"
+                        value="Banheiro"
+                        checked={formData.category.includes('Banheiro')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, category: [...formData.category, 'Banheiro']})
+                          } else {
+                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Banheiro')})
+                          }
+                        }}
+                      />
+                      <span style={{marginLeft: '5px'}}>Banheiro</span>
+                    </label>
+                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                      <input
+                        type="checkbox"
+                        value="Área Gourmet"
+                        checked={formData.category.includes('Área Gourmet')}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({...formData, category: [...formData.category, 'Área Gourmet']})
+                          } else {
+                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Área Gourmet')})
+                          }
+                        }}
+                      />
+                      <span style={{marginLeft: '5px'}}>Área Gourmet</span>
+                    </label>
+                  </div>
+                </div>
                 <input
                   type="number"
                   placeholder="Valor"
