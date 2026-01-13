@@ -439,8 +439,8 @@ function Home() {
               </div>
               <div className="info-item">
                 <strong>Instagram</strong>
-                <a href="https://www.instagram.com/vander_porcelanatos/" target="_blank" rel="noopener noreferrer">
-                  @vander_porcelanatos
+                <a href="https://www.instagram.com/vander_bancadas/" target="_blank" rel="noopener noreferrer">
+                  @vander_bancadas
                 </a>
               </div>
               <div className="info-item">

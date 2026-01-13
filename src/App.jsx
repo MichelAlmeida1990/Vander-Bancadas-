@@ -14,6 +14,7 @@ import AdminLogin from './pages/AdminLogin.jsx'
 import Accessibility from './components/Accessibility'
 import Analytics from './components/Analytics'
 import { AdminDataProvider } from './context/AdminDataContext.jsx'
+import StorageDiagnostic from './components/StorageDiagnostic'
 
 function App() {
   const isAdminRoute = window.location.pathname.startsWith('/admin')
@@ -25,6 +26,7 @@ function App() {
         <Analytics />
         {!isAdminRoute && <Navbar />}
         <AdminDataProvider>
+          <StorageDiagnostic />
           <main id="main-content" style={{ flex: 1, width: '100%', position: 'relative' }}>
             <Routes>
               <Route path="/" element={<Home />} />

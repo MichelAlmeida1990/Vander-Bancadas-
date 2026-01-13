@@ -25,9 +25,9 @@ function Contact() {
 
   const handleEmailSubmit = (e) => {
     e.preventDefault()
-    const subject = 'Contato - Vander Porcelanato'
+    const subject = 'Contato - Vander Bancadas'
     const body = `Olá!\n\nNome: ${formData.nome}\nEmail: ${formData.email}\nTelefone: ${formData.telefone}\n\nMensagem:\n${formData.mensagem}`
-    const mailtoUrl = `mailto:vanderporcelanato@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const mailtoUrl = `mailto:vanderbancadas@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     window.location.href = mailtoUrl
   }
 
@@ -122,8 +122,8 @@ function Contact() {
 
               <div className="info-item">
                 <strong>Instagram</strong>
-                <a href="https://www.instagram.com/vander_porcelanatos/" target="_blank" rel="noopener noreferrer">
-                  @vander_porcelanatos
+                <a href="https://www.instagram.com/vander_bancadas/" target="_blank" rel="noopener noreferrer">
+                  @vander_bancadas
                 </a>
               </div>
 

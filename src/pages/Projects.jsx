@@ -11,7 +11,33 @@ const Projects = () => {
   const { clients, projects, addClient, addProject, updateProject, deleteProject: deleteProjectFromStore } = useAdminData()
   const [showNewProject, setShowNewProject] = useState(false)
   const [showNewClient, setShowNewClient] = useState(false)
+  const [showContractModal, setShowContractModal] = useState(false)
+  const [selectedProject, setSelectedProject] = useState(null)
+  const [contractData, setContractData] = useState({
+    clientName: '',
+    clientCpf: '',
+    clientRg: '',
+    clientAddress: '',
+    clientPhone: '',
+    clientEmail: '',
+    projectName: '',
+    projectValue: '',
+    projectDescription: '',
+    installationDate: '',
+    paymentMethod: '',
+    paymentTerms: ''
+  })
   const [expandedProjects, setExpandedProjects] = useState({})
+  
+  // Dados da empresa Vander Bancadas
+  const companyData = {
+    name: 'Vander Bancadas',
+    cnpj: '38.022.318/0001-46',
+    address: 'São Paulo, SP',
+    phone: '(11) 97167-8867',
+    email: 'contato@vanderbancadas.com.br',
+    instagram: '@vander_bancadas'
+  }
   const [formData, setFormData] = useState({
     // Formulário de Projeto
     name: '',
@@ -50,7 +76,7 @@ const Projects = () => {
       name: 'Compra de Materiais', 
       percentage: 30, 
       status: 'pending',
-      description: 'Aquisição de porcelanatos, insumos e ferramentas'
+      description: 'Aquisição de mármores, granitos, insumos e ferramentas'
     },
     { 
       id: 'preparation', 
@@ -71,7 +97,7 @@ const Projects = () => {
       name: 'Finalização', 
       percentage: 10, 
       status: 'pending',
-      description: 'Limpeza, inspeção final e entrega'
+      description: 'Inspeção final e entrega'
     }
   ]
 
@@ -163,6 +189,27 @@ const Projects = () => {
       return phase
     })
 
+    // Verificar se a fase de aprovação foi concluída para abrir modal de contrato
+    if (phaseId === 'approval' && newStatus === 'completed') {
+      const client = clients.find(c => c.id === project.clientId)
+      setSelectedProject(project)
+      setContractData({
+        clientName: client?.name || '',
+        clientCpf: '',
+        clientRg: '',
+        clientAddress: client?.address || '',
+        clientPhone: client?.phone || '',
+        clientEmail: client?.email || '',
+        projectName: project.name,
+        projectValue: project.estimatedValue.toString(),
+        projectDescription: project.description || '',
+        installationDate: '',
+        paymentMethod: '',
+        paymentTerms: ''
+      })
+      setShowContractModal(true)
+    }
+
     // Atualizar status do projeto baseado nas fases
     const completedPhases = updatedPhases.filter(p => p.status === 'completed').length
     const totalPhases = updatedPhases.length
@@ -234,6 +281,142 @@ const Projects = () => {
     return completedPhases.reduce((sum, phase) => sum + (phase.actualCost || 0), 0)
   }
 
+  const generateContractPDF = async () => {
+    try {
+      // Criar um elemento HTML temporário para o contrato
+      const contractElement = document.createElement('div')
+      contractElement.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 800px;
+        padding: 40px;
+        background: white;
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.4;
+      `
+      
+      contractElement.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #D4A574; padding-bottom: 20px;">
+          <h1 style="color: #D4A574; margin: 0; font-size: 28px;">CONTRATO DE PRESTAÇÃO DE SERVIÇOS</h1>
+          <h2 style="color: #666; margin: 10px 0; font-size: 20px;">Vander Bancadas</h2>
+          <p style="margin: 5px 0; color: #666; font-size: 14px;">CNPJ: ${companyData.cnpj}</p>
+          <p style="margin: 5px 0; color: #666; font-size: 12px;">${companyData.address} | ${companyData.phone} | ${companyData.email}</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">DAS PARTES</h3>
+          <p style="margin: 10px 0;"><strong>CONTRATADO:</strong> ${companyData.name}, empresa inscrita no CNPJ nº ${companyData.cnpj}, com sede em ${companyData.address}.</p>
+          <p style="margin: 10px 0;"><strong>CONTRATANTE:</strong> ${contractData.clientName}, portador(a) do CPF nº ${contractData.clientCpf || '[Informar]'}, RG nº ${contractData.clientRg || '[Informar]'}, residente e domiciliado(a) à ${contractData.clientAddress || '[Informar]'}.</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA PRIMEIRA – DO OBJETO</h3>
+          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em mármore, granito e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
+          <p style="margin: 10px 0;"><strong>Descrição:</strong> ${contractData.projectDescription || 'Instalação de bancadas conforme projeto aprovado.'}</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEGUNDA – DO VALOR E CONDIÇÕES DE PAGAMENTO</h3>
+          <p style="margin: 10px 0;"><strong>Valor Total:</strong> R$ ${parseFloat(contractData.projectValue).toLocaleString('pt-BR')}</p>
+          <p style="margin: 10px 0;"><strong>Forma de Pagamento:</strong> ${contractData.paymentMethod || 'A definir'}</p>
+          <p style="margin: 10px 0;"><strong>Condições:</strong> ${contractData.paymentTerms || '50% de sinal e 50% na entrega'}</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA TERCEIRA – DO PRAZO DE EXECUÇÃO</h3>
+          <p style="margin: 10px 0;"><strong>Início Previsto:</strong> ${contractData.installationDate || 'A definir'}</p>
+          <p style="margin: 10px 0;">O prazo de entrega varia entre 20 a 30 dias corridos, contados a partir do pagamento do sinal.</p>
+          <p style="margin: 10px 0;">Trabalhamos com acabamento em massa base epóxi, oferecendo melhor acabamento e maior resistência mecânica contra impactos e desplacamento.</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUARTA – DAS OBRIGAÇÕES DO CONTRATADO</h3>
+          <p style="margin: 10px 0;">I. Fornecer materiais de qualidade conforme especificações acordadas;</p>
+          <p style="margin: 10px 0;">II. Executar os serviços com profissionalismo e nos prazos estabelecidos;</p>
+          <p style="margin: 10px 0;">III. Oferecer garantia de 2 anos contra defeitos de fabricação e instalação;</p>
+          <p style="margin: 10px 0;">IV. Responsabilizar-se por quebras durante transporte e instalação.</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUINTA – DAS OBRIGAÇÕES DO CONTRATANTE</h3>
+          <p style="margin: 10px 0;">I. Garantir acesso ao local dos trabalhos;</p>
+          <p style="margin: 10px 0;">II. Efetuar os pagamentos nos prazos estipulados;</p>
+          <p style="margin: 10px 0;">III. Fornecer medidas corretas e projetos atualizados;</p>
+          <p style="margin: 10px 0;">IV. Responsabilizar-se por itens fornecidos pelo cliente (cubas, torneiras).</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEXTA – CONDIÇÕES COMERCIAIS</h3>
+          <p style="margin: 10px 0;">• Orçamento válido por 2 meses;</p>
+          <p style="margin: 10px 0;">• 5% de desconto para pagamento em PIX ou dinheiro;</p>
+          <p style="margin: 10px 0;">• Parcelamento em até 6x sem juros no cartão;</p>
+          <p style="margin: 10px 0;">• Sinal obrigatório de 50% (pode ser parcelado).</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SÉTIMA – DA GARANTIA</h3>
+          <p style="margin: 10px 0;">O CONTRATADO oferece garantia de 2 (dois) anos contra defeitos de instalação, não cobrindo danos por uso inadequado, quedas ou impactos acidentais.</p>
+        </div>
+        
+        <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #D4A574;">
+          <div style="display: flex; justify-content: space-between;">
+            <div style="text-align: center; width: 45%;">
+              <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${companyData.name}</p>
+              <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATADO</p>
+            </div>
+            <div style="text-align: center; width: 45%;">
+              <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${contractData.clientName}</p>
+              <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATANTE</p>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #666;">
+            <p>São Paulo, ${format(new Date(), 'dd/MM/yyyy', { locale: ptBR })}</p>
+          </div>
+        </div>
+      `
+      
+      document.body.appendChild(contractElement)
+      
+      // Capturar o elemento como imagem
+      const canvas = await html2canvas(contractElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      })
+      
+      // Criar o PDF
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgData = canvas.toDataURL('image/png')
+      
+      // Calcular dimensões para caber na página A4
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95
+      const imgX = (pdfWidth - imgWidth * ratio) / 2
+      const imgY = 10
+      
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio)
+      
+      // Salvar o PDF
+      const fileName = `contrato_${contractData.projectName.replace(/[^a-z0-9]/gi, '_')}_${format(new Date(), 'dd-MM-yyyy')}.pdf`
+      pdf.save(fileName)
+      
+      // Remover elemento temporário
+      document.body.removeChild(contractElement)
+      
+      // Fechar modal
+      setShowContractModal(false)
+      
+    } catch (error) {
+      console.error('Erro ao gerar contrato:', error)
+      alert('Ocorreu um erro ao gerar o contrato. Tente novamente.')
+    }
+  }
+
   const exportProjectToPDF = async (project) => {
     try {
       // Criar um elemento HTML temporário para o orçamento
@@ -254,8 +437,8 @@ const Projects = () => {
       budgetElement.innerHTML = `
         <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #D4A574; padding-bottom: 20px;">
           <h1 style="color: #D4A574; margin: 0; font-size: 28px;">Vander Bancadas</h1>
-          <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em Bancadas de Porcelanato</p>
-          <p style="margin: 5px 0; color: #666; font-size: 12px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_porcelanatos</p>
+          <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em Bancadas de Mármore e Granito</p>
+          <p style="margin: 5px 0; color: #666; font-size: 12px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_bancadas</p>
         </div>
         
         <div style="margin-bottom: 30px;">
@@ -308,9 +491,40 @@ const Projects = () => {
         </div>
         ` : ''}
         
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 12px;">
-          <p>Vander Porcelanato - Especialistas em bancadas em porcelanato, cubas esculpidas e limpeza profissional</p>
-          <p>Atendimento em toda a Grande São Paulo</p>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+          <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #D4A574; margin-bottom: 20px;">
+            <h3 style="color: #333; margin-bottom: 15px; font-size: 16px; text-align: center;">⚠️ CONDIÇÕES COMERCIAIS IMPORTANTES</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;">
+              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
+                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">📅 Validade</strong>
+                Orçamento válido por 2 meses
+              </div>
+              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
+                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">🚚 Prazo de Entrega</strong>
+                20 a 30 dias corridos
+              </div>
+              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
+                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">💳 Desconto PIX/Dinheiro</strong>
+                5% de desconto
+              </div>
+              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
+                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">📦 Parcelamento</strong>
+                Até 6x sem juros
+              </div>
+              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6; grid-column: span 2;">
+                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">🔧 Sinal Obrigatório</strong>
+                50% de sinal (pode ser parcelado) - Prazo de instalação contado a partir do pagamento do sinal
+              </div>
+            </div>
+            <div style="margin-top: 12px; padding: 10px; background: #fff3cd; border-radius: 6px; border-left: 3px solid #ffc107; font-size: 11px;">
+              <strong style="color: #856404;">⭐ ACABAMENTO PREMIUM:</strong> Trabalhamos com acabamento em massa base epóxi, oferecendo melhor acabamento e maior resistência mecânica contra impactos e desplacamento.
+            </div>
+          </div>
+          
+          <div style="text-align: center; color: #666; font-size: 12px;">
+            <p><strong>Vander Bancadas</strong> - Especialistas em bancadas em mármore, granito e quartzo</p>
+            <p>Atendimento em toda a Grande São Paulo</p>
+          </div>
         </div>
       `
       
@@ -356,6 +570,41 @@ const Projects = () => {
       <div className="projects-header">
         <h1>Gestão de Projetos</h1>
         <div className="header-actions">
+          <button 
+            className="btn-primary" 
+            onClick={() => {
+              console.log('Testando modal...')
+              setSelectedProject({name: 'Projeto Teste', estimatedValue: 25000, description: 'Descrição teste'})
+              setContractData({
+                clientName: 'Cliente Teste',
+                clientCpf: '123.456.789-00',
+                clientRg: '12.345.678-9',
+                clientAddress: 'Rua Teste, 123 - São Paulo/SP',
+                clientPhone: '(11) 97718-0367',
+                clientEmail: 'teste@email.com',
+                projectName: 'Projeto Teste',
+                projectValue: '25000',
+                projectDescription: 'Descrição detalhada dos serviços...',
+                installationDate: '',
+                paymentMethod: '',
+                paymentTerms: ''
+              })
+              setShowContractModal(true)
+            }}
+            style={{
+              backgroundColor: '#ff6b6b',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              marginRight: '10px'
+            }}
+          >
+            🚨 TESTAR CONTRATO
+          </button>
           <button className="btn-primary" onClick={() => setShowNewClient(true)}>
             <Plus size={16} />
             Novo Cliente
@@ -450,7 +699,7 @@ const Projects = () => {
                   </div>
                   <span className="progress-text">{getPhaseProgress(project.phases)}%</span>
                 </div>
-                <div className="project-actions">
+                <div className="project-actions" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                   <button 
                     className="btn-export-pdf"
                     onClick={(e) => {
@@ -458,9 +707,62 @@ const Projects = () => {
                       exportProjectToPDF(project)
                     }}
                     title="Exportar Orçamento PDF"
+                    style={{
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      marginRight: '8px'
+                    }}
                   >
-                    <Download size={16} />
-                    PDF
+                    <Download size={14} />
+                    <span>Orçamento</span>
+                  </button>
+                  <button 
+                    className="btn-generate-contract"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const client = clients.find(c => c.id === project.clientId)
+                      setSelectedProject(project)
+                      setContractData({
+                        clientName: client?.name || '',
+                        clientCpf: '',
+                        clientRg: '',
+                        clientAddress: client?.address || '',
+                        clientPhone: client?.phone || '',
+                        clientEmail: client?.email || '',
+                        projectName: project.name,
+                        projectValue: project.estimatedValue.toString(),
+                        projectDescription: project.description || '',
+                        installationDate: '',
+                        paymentMethod: '',
+                        paymentTerms: ''
+                      })
+                      setShowContractModal(true)
+                    }}
+                    title="Gerar Contrato de Serviços"
+                    style={{
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      minWidth: '80px'
+                    }}
+                  >
+                    <FileText size={14} />
+                    <span>Contrato</span>
                   </button>
                   <div className="expand-icon">
                     {expandedProjects[project.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -651,6 +953,233 @@ const Projects = () => {
             <div className="modal-actions">
               <button className="btn-secondary" onClick={() => setShowNewClient(false)}>Cancelar</button>
               <button className="btn-primary" onClick={handleNewClient}>Criar Cliente</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Contrato */}
+      {showContractModal && (
+        <div className="modal-overlay" onClick={() => setShowContractModal(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{
+            maxWidth: '800px', 
+            maxHeight: '90vh', 
+            overflowY: 'auto',
+            backgroundColor: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+          }}>
+            <h2>Gerar Contrato de Prestação de Serviços</h2>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Nome do Cliente*</label>
+                <input
+                  type="text"
+                  value={contractData.clientName}
+                  onChange={(e) => setContractData({...contractData, clientName: e.target.value})}
+                  placeholder="Nome completo do cliente"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>CPF*</label>
+                <input
+                  type="text"
+                  value={contractData.clientCpf}
+                  onChange={(e) => setContractData({...contractData, clientCpf: e.target.value})}
+                  placeholder="000.000.000-00"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>RG</label>
+                <input
+                  type="text"
+                  value={contractData.clientRg}
+                  onChange={(e) => setContractData({...contractData, clientRg: e.target.value})}
+                  placeholder="00.000.000-0"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Endereço*</label>
+                <input
+                  type="text"
+                  value={contractData.clientAddress}
+                  onChange={(e) => setContractData({...contractData, clientAddress: e.target.value})}
+                  placeholder="Rua das Flores, 123 - São Paulo/SP"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Telefone*</label>
+                <input
+                  type="tel"
+                  value={contractData.clientPhone}
+                  onChange={(e) => setContractData({...contractData, clientPhone: e.target.value})}
+                  placeholder="(11) 97718-0367"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Email</label>
+                <input
+                  type="email"
+                  value={contractData.clientEmail}
+                  onChange={(e) => setContractData({...contractData, clientEmail: e.target.value})}
+                  placeholder="cliente@email.com"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Nome do Projeto*</label>
+                <input
+                  type="text"
+                  value={contractData.projectName}
+                  onChange={(e) => setContractData({...contractData, projectName: e.target.value})}
+                  placeholder="Cozinha Moderna"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{marginBottom: '15px'}}>
+                <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Valor do Projeto*</label>
+                <input
+                  type="number"
+                  value={contractData.projectValue}
+                  onChange={(e) => setContractData({...contractData, projectValue: e.target.value})}
+                  placeholder="25000"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div className="form-group" style={{gridColumn: 'span 2'}}>
+                <label>Descrição do Projeto</label>
+                <textarea
+                  value={contractData.projectDescription}
+                  onChange={(e) => setContractData({...contractData, projectDescription: e.target.value})}
+                  placeholder="Descrição detalhada dos serviços a serem executados..."
+                  rows={3}
+                  style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
+                />
+              </div>
+              <div className="form-group">
+                <label>Data Prevista de Instalação</label>
+                <input
+                  type="date"
+                  value={contractData.installationDate}
+                  onChange={(e) => setContractData({...contractData, installationDate: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Forma de Pagamento</label>
+                <select
+                  value={contractData.paymentMethod}
+                  onChange={(e) => setContractData({...contractData, paymentMethod: e.target.value})}
+                >
+                  <option value="">Selecione</option>
+                  <option value="PIX">PIX (5% de desconto)</option>
+                  <option value="Dinheiro">Dinheiro (5% de desconto)</option>
+                  <option value="Cartão">Cartão (até 6x sem juros)</option>
+                </select>
+              </div>
+              <div className="form-group" style={{gridColumn: 'span 2'}}>
+                <label>Condições de Pagamento</label>
+                <textarea
+                  value={contractData.paymentTerms}
+                  onChange={(e) => setContractData({...contractData, paymentTerms: e.target.value})}
+                  placeholder="50% de sinal e 50% na entrega..."
+                  rows={2}
+                  style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
+                />
+              </div>
+            </div>
+            <div className="modal-actions" style={{display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px'}}>
+              <button 
+                className="btn-secondary" 
+                onClick={() => setShowContractModal(false)}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #ddd',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="btn-primary" 
+                onClick={generateContractPDF}
+                disabled={!contractData.clientName || !contractData.clientCpf || !contractData.clientAddress || !contractData.clientPhone || !contractData.projectName || !contractData.projectValue}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#D4A574',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Gerar Contrato PDF
+              </button>
             </div>
           </div>
         </div>

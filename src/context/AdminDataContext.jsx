@@ -1,77 +1,82 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import { idbGet, idbSet } from '../utils/adminDb.js'
-
-const STORAGE_KEY = 'vander_admin_data_v1'
+import { getAdminData, setAdminData, diagnoseStorage } from '../utils/enhancedDb.js'
 
 const AdminDataContext = createContext(null)
 
+// Dados iniciais limpos
 const seedData = {
   clients: [],
   projects: []
 }
 
-const safeParse = (value) => {
-  try {
-    return JSON.parse(value)
-  } catch {
-    return null
-  }
-}
-
 export function AdminDataProvider({ children }) {
   const [clients, setClients] = useState([])
   const [projects, setProjects] = useState([])
-  const hydratedRef = useRef(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
     let cancelled = false
 
     const hydrate = async () => {
-      // 1) IndexedDB (preferencial)
-      const fromIdb = await idbGet(STORAGE_KEY)
-      if (cancelled) return
-
-      if (fromIdb && Array.isArray(fromIdb.clients) && Array.isArray(fromIdb.projects)) {
-        setClients(fromIdb.clients)
-        setProjects(fromIdb.projects)
-        hydratedRef.current = true
-        return
+      try {
+        // Carregar dados usando sistema robusto
+        const data = await getAdminData()
+        
+        if (cancelled) return
+        
+        if (data && data.clients && data.projects) {
+          setClients(data.clients)
+          setProjects(data.projects)
+          setIsHydrated(true)
+          console.log('✅ Dados carregados com sucesso:', {
+            clients: data.clients.length,
+            projects: data.projects.length
+          })
+        } else {
+          console.error('❌ Falha ao carregar dados')
+        }
+      } catch (error) {
+        console.error('❌ Erro crítico na hidratação:', error)
+        
+        // Fallback para dados iniciais
+        setClients(seedData.clients)
+        setProjects(seedData.projects)
+        setIsHydrated(true)
       }
-
-      // 2) Migração do localStorage antigo (se existir)
-      const raw = localStorage.getItem(STORAGE_KEY)
-      const parsed = raw ? safeParse(raw) : null
-      
-      if (parsed && Array.isArray(parsed.clients) && Array.isArray(parsed.projects)) {
-        setClients(parsed.clients)
-        setProjects(parsed.projects)
-        hydratedRef.current = true
-        await idbSet(STORAGE_KEY, parsed)
-        return
-      }
-
-      // 3) Seed inicial
-      setClients(seedData.clients)
-      setProjects(seedData.projects)
-      hydratedRef.current = true
-      await idbSet(STORAGE_KEY, { clients: seedData.clients, projects: seedData.projects })
     }
 
     hydrate()
+
+    // Diagnóstico do armazenamento
+    diagnoseStorage()
 
     return () => {
       cancelled = true
     }
   }, [])
 
+  // Auto-salvamento robusto
   useEffect(() => {
-    if (!hydratedRef.current) return
-    idbSet(STORAGE_KEY, {
-      clients,
-      projects
-    })
-  }, [clients, projects])
+    if (!isHydrated) return
+    
+    const saveData = async () => {
+      try {
+        const success = await setAdminData({ clients, projects })
+        if (success) {
+          console.log('✅ Dados salvos automaticamente')
+        } else {
+          console.warn('⚠️ Falha ao salvar dados automaticamente')
+        }
+      } catch (error) {
+        console.error('❌ Erro ao salvar dados:', error)
+      }
+    }
+
+    // Debounce para não sobrecarregar
+    const timeoutId = setTimeout(saveData, 500)
+    return () => clearTimeout(timeoutId)
+  }, [clients, projects, isHydrated])
 
   const clientsById = useMemo(() => {
     const map = new Map()
@@ -148,7 +153,36 @@ export function AdminDataProvider({ children }) {
     addProject,
     updateProject,
     deleteProject,
-    addProjectHistory
+    addProjectHistory,
+    isHydrated // Expor status de hidratação
+  }
+
+  // Mostrar indicador de carregamento enquanto dados não estão prontos
+  if (!isHydrated) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        color: '#ffffff',
+        fontSize: '18px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '10px' }}>🔄</div>
+          <div>Carregando dados...</div>
+          <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '5px' }}>
+            Aguarde um momento
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>

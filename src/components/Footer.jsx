@@ -9,9 +9,9 @@ function Footer() {
         <div className="footer-content">
           <div className="footer-section">
             <h3 className="footer-logo">
-              Vander <span className="logo-primary">Porcelanato</span>
+              Vander <span className="logo-primary">Bancadas</span>
             </h3>
-            <p>Especialistas em bancadas em porcelanato, cubas esculpidas e projetos sob medida na Grande São Paulo.</p>
+            <p>Especialistas em bancadas em mármore, granito e quartzo, com acabamento em massa base epóxi na Grande São Paulo.</p>
           </div>
 
           <div className="footer-section">
@@ -41,8 +41,8 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://www.instagram.com/vander_porcelanatos/" target="_blank" rel="noopener noreferrer">
-                  Instagram: @vander_porcelanatos
+                <a href="https://www.instagram.com/vander_bancadas/" target="_blank" rel="noopener noreferrer">
+                  Instagram: @vander_bancadas
                 </a>
               </li>
             </ul>
@@ -51,7 +51,7 @@ function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Vander Porcelanato. Todos os direitos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Vander Bancadas. Todos os direitos reservados.</p>
           <a className="admin-access-link" href="/admin/login">Acesso Restrito</a>
         </div>
       </div>
