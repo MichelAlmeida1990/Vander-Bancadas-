@@ -40,7 +40,7 @@ function Services() {
 
             <div className="service-card">
               <div className="service-icon">✨</div>
-              <h3>Limpeza de Quartzo e Pedras Naturais</h3>
+              <h3>Limpeza de Porcelanato, Lâminas Sinterizadas e Quartzo</h3>
               <p>Serviço especializado de limpeza e restauração para manter suas superfícies como novas.</p>
               <ul>
                 <li>✓ Remoção de manchas profundas</li>

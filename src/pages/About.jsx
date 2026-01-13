@@ -7,7 +7,7 @@ function About() {
       <section className="page-hero">
         <div className="container">
           <h1>Sobre a <span className="text-primary">Vander</span></h1>
-          <p>Especialistas em porcelanato, quartzo, granito e mármore. Atendendo a Grande São Paulo com projetos sob medida e qualidade premium.</p>
+          <p>Especialistas em porcelanato, lâminas sinterizadas e quartzo. Atendendo a Grande São Paulo com projetos sob medida e qualidade premium.</p>
         </div>
       </section>
 

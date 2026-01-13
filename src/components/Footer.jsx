@@ -11,7 +11,7 @@ function Footer() {
             <h3 className="footer-logo">
               Vander <span className="logo-primary">Bancadas</span>
             </h3>
-            <p>Especialistas em bancadas em mármore, granito e quartzo, com acabamento em massa base epóxi na Grande São Paulo.</p>
+            <p>Especialistas em bancadas de porcelanato, lâminas sinterizadas e quartzo, com acabamento em massa base epóxi na Grande São Paulo.</p>
           </div>
 
           <div className="footer-section">

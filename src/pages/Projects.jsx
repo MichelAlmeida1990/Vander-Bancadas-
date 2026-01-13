@@ -76,7 +76,7 @@ const Projects = () => {
       name: 'Compra de Materiais', 
       percentage: 30, 
       status: 'pending',
-      description: 'Aquisição de mármores, granitos, insumos e ferramentas'
+      description: 'Aquisição de porcelanato e lâminas sinterizadas, quartzo, insumos e ferramentas'
     },
     { 
       id: 'preparation', 
@@ -313,7 +313,7 @@ const Projects = () => {
         
         <div style="margin-bottom: 30px;">
           <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA PRIMEIRA – DO OBJETO</h3>
-          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em mármore, granito e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
+          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em porcelanato e lâminas sinterizadas, quartzo e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
           <p style="margin: 10px 0;"><strong>Descrição:</strong> ${contractData.projectDescription || 'Instalação de bancadas conforme projeto aprovado.'}</p>
         </div>
         
@@ -437,7 +437,7 @@ const Projects = () => {
       budgetElement.innerHTML = `
         <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #D4A574; padding-bottom: 20px;">
           <h1 style="color: #D4A574; margin: 0; font-size: 28px;">Vander Bancadas</h1>
-          <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em Bancadas de Mármore e Granito</p>
+          <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em Bancadas de Porcelanato, Lâminas Sinterizadas e Quartzo</p>
           <p style="margin: 5px 0; color: #666; font-size: 12px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_bancadas</p>
         </div>
         
@@ -522,7 +522,7 @@ const Projects = () => {
           </div>
           
           <div style="text-align: center; color: #666; font-size: 12px;">
-            <p><strong>Vander Bancadas</strong> - Especialistas em bancadas em mármore, granito e quartzo</p>
+            <p><strong>Vander Bancadas</strong> - Especialistas em bancadas de porcelanato, lâminas sinterizadas e quartzo</p>
             <p>Atendimento em toda a Grande São Paulo</p>
           </div>
         </div>

@@ -10,10 +10,10 @@ const SEO = ({
   ogType = 'website',
   structuredData 
 }) => {
-  const siteTitle = 'Vander Bancadas - Especialistas em Mármore e Granito'
+  const siteTitle = 'Vander Bancadas - Especialistas em Porcelanato, Lâminas Sinterizadas e Quartzo'
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle
-  const defaultDescription = 'Especialistas em bancadas em mármore, granito e quartzo com acabamento em massa base epóxi na Grande São Paulo. Mais de 1.000 projetos entregues com qualidade premium.'
-  const defaultKeywords = 'bancadas mármore, bancadas granito, bancadas quartzo, acabamento epóxi, São Paulo, Vander Bancadas'
+  const defaultDescription = 'Especialistas em bancadas de porcelanato, lâminas sinterizadas e quartzo com acabamento em massa base epóxi na Grande São Paulo. Mais de 1.000 projetos entregues com qualidade premium.'
+  const defaultKeywords = 'bancadas porcelanato, lâminas sinterizadas, bancadas quartzo, acabamento epóxi, São Paulo, Vander Bancadas'
   
   return (
     <Helmet>

@@ -534,7 +534,14 @@ const Dashboard = () => {
                 </span>
               </div>
               <div className="client-actions">
-                <button className="icon-btn" title="Editar">
+                <button 
+                  className="icon-btn" 
+                  title="Editar Cliente"
+                  onClick={() => {
+                    // TODO: Implementar função de editar cliente
+                    alert('Função de editar cliente em desenvolvimento')
+                  }}
+                >
                   <Edit size={16} />
                 </button>
                 <button 

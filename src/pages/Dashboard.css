@@ -482,20 +482,27 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: var(--gray-100);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff !important;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
   background: var(--primary-color);
-  color: #ffffff;
+  color: #ffffff !important;
+}
+
+.icon-btn.danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545 !important;
 }
 
 .icon-btn.danger:hover {
-  background: rgba(220, 53, 69, 0.1);
-  color: var(--danger-color);
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545 !important;
 }
 
 /* Clients Tab */
@@ -559,6 +566,47 @@
   margin-bottom: var(--space-3);
   color: #ffffff;
   font-size: var(--text-sm);
+}
+
+/* Client Actions Specific */
+.client-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.client-actions .icon-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.client-actions .icon-btn:hover {
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
+}
+
+.client-actions .icon-btn.danger {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.client-actions .icon-btn.danger:hover {
+  background: rgba(220, 53, 69, 0.2) !important;
+  color: #dc3545 !important;
+}
+
+.client-actions .icon-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
 }
 
 /* Ideas Tab */

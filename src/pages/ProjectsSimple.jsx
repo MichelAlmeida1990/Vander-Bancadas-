@@ -83,16 +83,17 @@ function ProjectsSimple() {
     const params = new URLSearchParams(location.search)
     const modal = params.get('modal')
 
-    if (modal === 'client') {
+    // Evita abrir modal se já estiver aberto
+    if (modal === 'client' && !showNewClient) {
       setShowNewClient(true)
       setShowNewProject(false)
     }
 
-    if (modal === 'project') {
+    if (modal === 'project' && !showNewProject) {
       setShowNewProject(true)
       setShowNewClient(false)
     }
-  }, [location.search])
+  }, [location.search, showNewClient, showNewProject])
 
   const openClientModal = () => {
     setShowNewClient(true)
@@ -153,6 +154,13 @@ function ProjectsSimple() {
       return
     }
 
+    // Verifica se já existe um cliente com mesmo email para evitar duplicação
+    const existingClient = clients.find(c => c.email === formData.clientEmail)
+    if (existingClient) {
+      alert('Já existe um cliente com este email!')
+      return
+    }
+
     addClient({
       name: formData.clientName,
       email: formData.clientEmail,
@@ -171,6 +179,8 @@ function ProjectsSimple() {
       clientEmail: '', 
       clientPhone: ''
     })
+    // Limpa a URL para não abrir o modal novamente ao recarregar
+    window.history.replaceState(null, '', '/admin/projects')
   }
 
   const updateProjectStatus = (projectId, newStatus) => {
@@ -216,7 +226,7 @@ function ProjectsSimple() {
             <img src="/gallery/bancada-porcelanato-025.jpg" alt="Vander Bancadas Logo" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #D4A574; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);" />
           </div>
           <h1 style="color: #D4A574; margin: 15px 0 0 0; font-size: 32px; font-weight: 700; letter-spacing: 1px;">VANDER BANCADAS</h1>
-          <p style="margin: 8px 0; color: #666; font-size: 16px; font-weight: 500;">Especialistas em Bancadas de Mármore e Granito</p>
+          <p style="margin: 8px 0; color: #666; font-size: 16px; font-weight: 500;">Especialistas em Bancadas de Porcelanato, Lâminas Sinterizadas e Quartzo</p>
           <p style="margin: 5px 0; color: #888; font-size: 13px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_bancadas</p>
           <p style="margin: 5px 0; color: #888; font-size: 13px;">Atendimento em toda a Grande São Paulo</p>
         </div>
@@ -293,7 +303,7 @@ function ProjectsSimple() {
         <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #D4A574;">
           <div style="text-align: center; margin-bottom: 20px;">
             <h4 style="color: #333; margin: 0 0 10px 0; font-size: 18px;">Vander Bancadas</h4>
-            <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em bancadas em mármore, granito e quartzo com acabamento em massa base epóxi</p>
+            <p style="margin: 5px 0; color: #666; font-size: 14px;">Especialistas em bancadas de porcelanato, lâminas sinterizadas e quartzo com acabamento em massa base epóxi</p>
             <p style="margin: 5px 0; color: #666; font-size: 14px;">Atendimento em toda a Grande São Paulo com qualidade e garantia</p>
           </div>
           <div style="display: flex; justify-content: space-around; margin-top: 20px; text-align: center;">
@@ -398,7 +408,7 @@ function ProjectsSimple() {
         
         <div style="margin-bottom: 30px;">
           <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA PRIMEIRA – DO OBJETO</h3>
-          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em mármore, granito e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
+          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em porcelanato e lâminas sinterizadas, quartzo e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
           <p style="margin: 10px 0;"><strong>Descrição:</strong> ${contractData.projectDescription || 'Instalação de bancadas conforme projeto aprovado.'}</p>
         </div>
         
