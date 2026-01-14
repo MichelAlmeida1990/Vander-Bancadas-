@@ -63,8 +63,10 @@ export function AdminDataProvider({ children }) {
       return newClient
     } catch (error) {
       console.error('❌ Erro ao criar cliente no Firebase:', error)
-      setError(error.message)
-      throw error
+      const errorMessage = error.message || 'Erro ao criar cliente. Verifique sua conexão e tente novamente.'
+      setError(errorMessage)
+      // Não lança o erro para não quebrar a aplicação, apenas define o erro no estado
+      return { error: errorMessage }
     }
   }
 
@@ -219,46 +221,60 @@ export function AdminDataProvider({ children }) {
     )
   }
 
-  // Mostrar erro se houver
-  if (error) {
+  // Mostrar erro se houver (mas não bloquear completamente a aplicação)
+  if (error && loading === false) {
     return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(220, 53, 69, 0.9)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999,
-        color: '#ffffff',
-        fontSize: '16px'
-      }}>
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <div style={{ marginBottom: '10px' }}>❌</div>
-          <div>Erro ao carregar dados</div>
-          <div style={{ fontSize: '14px', opacity: 0.8, marginTop: '5px' }}>
-            {error}
+      <>
+        <div style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          background: 'rgba(220, 53, 69, 0.9)',
+          color: '#ffffff',
+          padding: '15px 20px',
+          borderRadius: '8px',
+          zIndex: 9999,
+          maxWidth: '400px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Erro de Conexão</div>
+              <div style={{ fontSize: '14px' }}>{error}</div>
+            </div>
+            <button 
+              onClick={() => setError(null)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#ffffff',
+                fontSize: '20px',
+                cursor: 'pointer',
+                padding: '0',
+                marginLeft: '15px'
+              }}
+            >
+              ×
+            </button>
           </div>
           <button 
             onClick={loadData}
             style={{
-              marginTop: '15px',
-              padding: '10px 20px',
+              marginTop: '10px',
+              padding: '8px 16px',
               background: '#ffffff',
               color: '#dc3545',
               border: 'none',
-              borderRadius: '5px',
+              borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '12px'
             }}
           >
             Tentar novamente
           </button>
         </div>
-      </div>
+        <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>
+      </>
     )
   }
 

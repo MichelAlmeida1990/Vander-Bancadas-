@@ -92,6 +92,8 @@ function ProjectsSimple() {
 
   // Função para calcular valor total das categorias
   const calculateTotalValue = (categories) => {
+    if (!categories) return '0.00'
+    
     const total = Object.values(categories || formData.categories)
       .filter(cat => cat.checked)
       .reduce((sum, cat) => sum + parseFloat(cat.value || 0), 0)
@@ -101,10 +103,11 @@ function ProjectsSimple() {
   // Função para atualizar categoria
   const updateCategory = (categoryName, field, value) => {
     setFormData(prev => {
+      const prevCategories = prev.categories || {}
       const updatedCategories = {
-        ...prev.categories,
+        ...prevCategories,
         [categoryName]: {
-          ...prev.categories[categoryName],
+          ...prevCategories[categoryName],
           [field]: value
         }
       }
@@ -156,6 +159,8 @@ function ProjectsSimple() {
 
   // Atualizar valor total quando as categorias mudam
   useEffect(() => {
+    if (!formData.categories) return
+    
     const totalValue = Object.values(formData.categories)
       .filter(cat => cat.checked)
       .reduce((sum, cat) => sum + parseFloat(cat.value || 0), 0)
@@ -929,12 +934,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.nicho.checked}
+                      checked={formData.categories?.nicho?.checked || false}
                       onChange={(e) => updateCategory('nicho', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Nicho</span>
                   </label>
-                  {formData.categories.nicho.checked && (
+                  {formData.categories?.nicho?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -942,7 +947,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes do nicho"
-                            value={formData.categories.nicho.observation}
+                            value={formData.categories?.nicho?.observation || ''}
                             onChange={(e) => updateCategory('nicho', 'observation', e.target.value)}
                           />
                         </div>
@@ -951,7 +956,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.nicho.value}
+                            value={formData.categories?.nicho?.value || ''}
                             onChange={(e) => updateCategory('nicho', 'value', e.target.value)}
                           />
                         </div>
@@ -965,12 +970,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.prateleira.checked}
+                      checked={formData.categories?.prateleira?.checked || false}
                       onChange={(e) => updateCategory('prateleira', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Prateleira</span>
                   </label>
-                  {formData.categories.prateleira.checked && (
+                  {formData.categories?.prateleira?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -978,7 +983,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes da prateleira"
-                            value={formData.categories.prateleira.observation}
+                            value={formData.categories?.prateleira?.observation || ''}
                             onChange={(e) => updateCategory('prateleira', 'observation', e.target.value)}
                           />
                         </div>
@@ -987,7 +992,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.prateleira.value}
+                            value={formData.categories?.prateleira?.value || ''}
                             onChange={(e) => updateCategory('prateleira', 'value', e.target.value)}
                           />
                         </div>
@@ -1001,12 +1006,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.bancada.checked}
+                      checked={formData.categories?.bancada?.checked || false}
                       onChange={(e) => updateCategory('bancada', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Bancada</span>
                   </label>
-                  {formData.categories.bancada.checked && (
+                  {formData.categories?.bancada?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -1014,7 +1019,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes da bancada"
-                            value={formData.categories.bancada.observation}
+                            value={formData.categories?.bancada?.observation || ''}
                             onChange={(e) => updateCategory('bancada', 'observation', e.target.value)}
                           />
                         </div>
@@ -1023,7 +1028,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.bancada.value}
+                            value={formData.categories?.bancada?.value || ''}
                             onChange={(e) => updateCategory('bancada', 'value', e.target.value)}
                           />
                         </div>
@@ -1037,12 +1042,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.cozinha.checked}
+                      checked={formData.categories?.cozinha?.checked || false}
                       onChange={(e) => updateCategory('cozinha', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Cozinha</span>
                   </label>
-                  {formData.categories.cozinha.checked && (
+                  {formData.categories?.cozinha?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -1050,7 +1055,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes da cozinha"
-                            value={formData.categories.cozinha.observation}
+                            value={formData.categories?.cozinha?.observation || ''}
                             onChange={(e) => updateCategory('cozinha', 'observation', e.target.value)}
                           />
                         </div>
@@ -1059,7 +1064,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.cozinha.value}
+                            value={formData.categories?.cozinha?.value || ''}
                             onChange={(e) => updateCategory('cozinha', 'value', e.target.value)}
                           />
                         </div>
@@ -1073,12 +1078,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.banheiro.checked}
+                      checked={formData.categories?.banheiro?.checked || false}
                       onChange={(e) => updateCategory('banheiro', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Banheiro</span>
                   </label>
-                  {formData.categories.banheiro.checked && (
+                  {formData.categories?.banheiro?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -1086,7 +1091,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes do banheiro"
-                            value={formData.categories.banheiro.observation}
+                            value={formData.categories?.banheiro?.observation || ''}
                             onChange={(e) => updateCategory('banheiro', 'observation', e.target.value)}
                           />
                         </div>
@@ -1095,7 +1100,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.banheiro.value}
+                            value={formData.categories?.banheiro?.value || ''}
                             onChange={(e) => updateCategory('banheiro', 'value', e.target.value)}
                           />
                         </div>
@@ -1109,12 +1114,12 @@ function ProjectsSimple() {
                   <label className="category-header">
                     <input
                       type="checkbox"
-                      checked={formData.categories.area_gourmet.checked}
+                      checked={formData.categories?.area_gourmet?.checked || false}
                       onChange={(e) => updateCategory('area_gourmet', 'checked', e.target.checked)}
                     />
                     <span className="category-title">Área Gourmet</span>
                   </label>
-                  {formData.categories.area_gourmet.checked && (
+                  {formData.categories?.area_gourmet?.checked && (
                     <div className="category-details">
                       <div className="form-row">
                         <div className="form-group">
@@ -1122,7 +1127,7 @@ function ProjectsSimple() {
                           <input
                             type="text"
                             placeholder="Detalhes da área gourmet"
-                            value={formData.categories.area_gourmet.observation}
+                            value={formData.categories?.area_gourmet?.observation || ''}
                             onChange={(e) => updateCategory('area_gourmet', 'observation', e.target.value)}
                           />
                         </div>
@@ -1131,7 +1136,7 @@ function ProjectsSimple() {
                           <input
                             type="number"
                             placeholder="0,00"
-                            value={formData.categories.area_gourmet.value}
+                            value={formData.categories?.area_gourmet?.value || ''}
                             onChange={(e) => updateCategory('area_gourmet', 'value', e.target.value)}
                           />
                         </div>

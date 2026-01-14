@@ -13,6 +13,7 @@ const Projects = () => {
   const [showNewClient, setShowNewClient] = useState(false)
   const [showContractModal, setShowContractModal] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
+  const [isCreatingClient, setIsCreatingClient] = useState(false)
   const [contractData, setContractData] = useState({
     clientName: '',
     clientCpf: '',
@@ -148,29 +149,47 @@ const Projects = () => {
     })
   }
 
-  const handleNewClient = () => {
+  const handleNewClient = async () => {
     if (!formData.clientName || !formData.clientEmail || !formData.clientPhone) {
       alert('Preencha todos os campos obrigatórios')
       return
     }
 
-    addClient({
-      name: formData.clientName,
-      email: formData.clientEmail,
-      phone: formData.clientPhone,
-      address: formData.clientAddress,
-      type: formData.clientType
-    })
+    setIsCreatingClient(true)
     
-    setShowNewClient(false)
-    setFormData({
-      ...formData,
-      clientName: '',
-      clientEmail: '',
-      clientPhone: '',
-      clientAddress: '',
-      clientType: 'residential'
-    })
+    try {
+      const result = await addClient({
+        name: formData.clientName,
+        email: formData.clientEmail,
+        phone: formData.clientPhone,
+        address: formData.clientAddress,
+        type: formData.clientType
+      })
+      
+      // Verifica se houve erro na criação
+      if (result && result.error) {
+        alert(result.error)
+        return
+      }
+      
+      setShowNewClient(false)
+      setFormData({
+        ...formData,
+        clientName: '',
+        clientEmail: '',
+        clientPhone: '',
+        clientAddress: '',
+        clientType: 'residential'
+      })
+      
+      // Feedback de sucesso
+      alert('Cliente criado com sucesso!')
+    } catch (error) {
+      console.error('Erro ao criar cliente:', error)
+      alert('Erro inesperado ao criar cliente. Tente novamente.')
+    } finally {
+      setIsCreatingClient(false)
+    }
   }
 
   const updatePhaseStatus = (projectId, phaseId, newStatus) => {
@@ -951,8 +970,12 @@ const Projects = () => {
               </div>
             </div>
             <div className="modal-actions">
-              <button className="btn-secondary" onClick={() => setShowNewClient(false)}>Cancelar</button>
-              <button className="btn-primary" onClick={handleNewClient}>Criar Cliente</button>
+              <button className="btn-secondary" onClick={() => setShowNewClient(false)} disabled={isCreatingClient}>
+                Cancelar
+              </button>
+              <button className="btn-primary" onClick={handleNewClient} disabled={isCreatingClient}>
+                {isCreatingClient ? 'Criando...' : 'Criar Cliente'}
+              </button>
             </div>
           </div>
         </div>
