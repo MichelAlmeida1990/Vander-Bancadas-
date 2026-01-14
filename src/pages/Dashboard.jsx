@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [selectedProject, setSelectedProject] = useState(null)
   const [showProjectModal, setShowProjectModal] = useState(false)
 
-  const { clients, projects, setClients, setProjects } = useAdminData()
+  const { clients, projects, setClients, setProjects, deleteClient: deleteClientFromStore, deleteProject: deleteProjectFromStore } = useAdminData()
 
   const openProjectModal = (projects) => {
     // Extrai a data do calendário do último item
@@ -35,27 +35,26 @@ const Dashboard = () => {
     setShowProjectModal(false)
   }
 
-  const deleteClient = (clientId) => {
+  const deleteClient = async (clientId) => {
     if (window.confirm('Tem certeza que deseja excluir este cliente? Todos os projetos associados também serão excluídos.')) {
-      // Remover projetos associados ao cliente
-      const updatedProjects = projects.filter(p => p.clientId !== clientId)
-      // Remover o cliente
-      const updatedClients = clients.filter(c => c.id !== clientId)
-      
-      setProjects(updatedProjects)
-      setClients(updatedClients)
-      
-      // Atualizar localStorage
-      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
-      localStorage.setItem('vander_clients', JSON.stringify(updatedClients))
+      try {
+        await deleteClientFromStore(clientId)
+        // O context já cuida de remover os projetos associados
+      } catch (error) {
+        console.error('Erro ao excluir cliente:', error)
+        alert('Erro ao excluir cliente. Tente novamente.')
+      }
     }
   }
 
-  const deleteProject = (projectId) => {
+  const deleteProject = async (projectId) => {
     if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
-      const updatedProjects = projects.filter(p => p.id !== projectId)
-      setProjects(updatedProjects)
-      localStorage.setItem('vander_projects', JSON.stringify(updatedProjects))
+      try {
+        await deleteProjectFromStore(projectId)
+      } catch (error) {
+        console.error('Erro ao excluir projeto:', error)
+        alert('Erro ao excluir projeto. Tente novamente.')
+      }
     }
   }
 

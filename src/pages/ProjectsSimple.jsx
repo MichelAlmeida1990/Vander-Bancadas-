@@ -141,6 +141,7 @@ function ProjectsSimple() {
     })
   }
 
+  // useEffect para controlar abertura de modal via URL
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const modal = params.get('modal')
@@ -155,7 +156,13 @@ function ProjectsSimple() {
       setShowNewProject(true)
       setShowNewClient(false)
     }
-  }, [location.search, showNewClient, showNewProject])
+  }, [location.search])
+
+  // useEffect para controlar comportamento dos modais (sem depender da URL)
+  useEffect(() => {
+    // Este useEffect só monitora os estados dos modais
+    // Não faz nada, apenas evita ciclos
+  }, [showNewClient, showNewProject])
 
   // Atualizar valor total quando as categorias mudam
   useEffect(() => {
