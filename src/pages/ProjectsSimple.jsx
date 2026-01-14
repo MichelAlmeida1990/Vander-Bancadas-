@@ -1186,7 +1186,7 @@ function ProjectsSimple() {
 
       {/* Modal Novo Cliente */}
       {showNewClient && (
-        <div className="modal-overlay" onClick={() => setShowNewClient(false)}>
+        <div className="modal-overlay" onClick={closeClientModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Novo Cliente</h2>
             <div className="form">
@@ -1210,11 +1210,7 @@ function ProjectsSimple() {
               />
             </div>
             <div className="modal-actions">
-              <button className="btn" onClick={() => {
-                console.log('Botão Cancelar cliente clicado');
-                setShowNewClient(false);
-                window.history.replaceState(null, '', '/admin/projects');
-              }}>Cancelar</button>
+              <button className="btn" onClick={closeClientModal}>Cancelar</button>
               <button className="btn btn-primary" onClick={handleNewClient}>Criar</button>
             </div>
           </div>
