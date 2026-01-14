@@ -1210,7 +1210,10 @@ function ProjectsSimple() {
               />
             </div>
             <div className="modal-actions">
-              <button className="btn" onClick={() => setShowNewClient(false)}>Cancelar</button>
+              <button className="btn" onClick={() => {
+                console.log('Botão Cancelar clicado');
+                setShowNewClient(false);
+              }}>Cancelar</button>
               <button className="btn btn-primary" onClick={handleNewClient}>Criar</button>
             </div>
           </div>

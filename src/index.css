@@ -212,7 +212,6 @@ button {
 
   /* Força texto branco em elementos do admin no mobile */
   .dashboard *,
-  .modal-content *,
   .client-card *,
   .project-card *,
   .stat-card *,
@@ -220,5 +219,36 @@ button {
   .summary-card *,
   .idea-card * {
     color: #ffffff !important;
+  }
+
+  /* Garantir legibilidade dos modals no mobile */
+  .modal-content {
+    color: #333333 !important;
+    background: #ffffff !important;
+  }
+  
+  .modal-content h2,
+  .modal-content h3,
+  .modal-content h4,
+  .modal-content h5,
+  .modal-content h6 {
+    color: #333333 !important;
+  }
+  
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select,
+  .modal-content label {
+    color: #333333 !important;
+  }
+  
+  .modal-content .form input {
+    color: #333333 !important;
+    background: #ffffff !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  .modal-content .form input::placeholder {
+    color: #999999 !important;
   }
 }
