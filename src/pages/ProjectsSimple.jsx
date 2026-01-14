@@ -183,12 +183,10 @@ function ProjectsSimple() {
 
   const closeClientModal = () => {
     setShowNewClient(false)
-    window.history.replaceState(null, '', '/admin/projects')
   }
 
   const closeProjectModal = () => {
     setShowNewProject(false)
-    window.history.replaceState(null, '', '/admin/projects')
   }
 
   const handleNewProject = () => {
@@ -238,7 +236,7 @@ function ProjectsSimple() {
     })
   }
 
-  const handleNewClient = () => {
+  const handleNewClient = async () => {
     if (!formData.clientName || !formData.clientEmail || !formData.clientPhone) {
       alert('Preencha todos os campos obrigatórios')
       return
@@ -251,26 +249,31 @@ function ProjectsSimple() {
       return
     }
 
-    addClient({
-      name: formData.clientName,
-      email: formData.clientEmail,
-      phone: formData.clientPhone
-    })
-    setShowNewClient(false)
-    showFeedback('Cliente cadastrado com sucesso!')
-    setFormData({ 
-      name: '', 
-      clientId: '', 
-      category: '', 
-      value: '', 
-      startDate: '', 
-      endDate: '',
-      clientName: '', 
-      clientEmail: '', 
-      clientPhone: ''
-    })
-    // Limpa a URL para não abrir o modal novamente ao recarregar
-    window.history.replaceState(null, '', '/admin/projects')
+    try {
+      await addClient({
+        name: formData.clientName,
+        email: formData.clientEmail,
+        phone: formData.clientPhone
+      })
+      
+      // Só fecha o modal se a criação for bem-sucedida
+      setShowNewClient(false)
+      showFeedback('Cliente cadastrado com sucesso!')
+      setFormData({ 
+        name: '', 
+        clientId: '', 
+        category: '', 
+        value: '', 
+        startDate: '', 
+        endDate: '',
+        clientName: '', 
+        clientEmail: '', 
+        clientPhone: ''
+      })
+    } catch (error) {
+      console.error('Erro ao criar cliente:', error)
+      alert('Erro ao criar cliente. Tente novamente.')
+    }
   }
 
   const updateProjectStatus = (projectId, newStatus) => {

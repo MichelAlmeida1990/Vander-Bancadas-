@@ -14,6 +14,11 @@ const Projects = () => {
   const [showContractModal, setShowContractModal] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
   const [isCreatingClient, setIsCreatingClient] = useState(false)
+  
+  // Debug para monitorar mudanças no modal
+  useEffect(() => {
+    console.log('🔍 showNewClient mudou para:', showNewClient)
+  }, [showNewClient])
   const [contractData, setContractData] = useState({
     clientName: '',
     clientCpf: '',
@@ -150,15 +155,20 @@ const Projects = () => {
   }
 
   const handleNewClient = async () => {
+    console.log('🔍 handleNewClient iniciado')
+    console.log('🔍 showNewClient antes:', showNewClient)
+    
     if (!formData.clientName || !formData.clientEmail || !formData.clientPhone) {
       alert('Preencha todos os campos obrigatórios')
       return
     }
 
     setIsCreatingClient(true)
+    console.log('🔍 isCreatingClient setado para true')
     
     try {
-      const result = await addClient({
+      console.log('🔍 Chamando addClient...')
+      await addClient({
         name: formData.clientName,
         email: formData.clientEmail,
         phone: formData.clientPhone,
@@ -166,13 +176,13 @@ const Projects = () => {
         type: formData.clientType
       })
       
-      // Verifica se houve erro na criação
-      if (result && result.error) {
-        alert(result.error)
-        return
-      }
+      console.log('🔍 addClient concluído com sucesso')
       
+      // Se chegou aqui, deu certo - fecha o modal
+      console.log('🔍 Fechando modal...')
       setShowNewClient(false)
+      console.log('🔍 showNewClient setado para false')
+      
       setFormData({
         ...formData,
         clientName: '',
@@ -185,9 +195,10 @@ const Projects = () => {
       // Feedback de sucesso
       alert('Cliente criado com sucesso!')
     } catch (error) {
-      console.error('Erro ao criar cliente:', error)
-      alert('Erro inesperado ao criar cliente. Tente novamente.')
+      console.error('❌ Erro ao criar cliente:', error)
+      alert('Erro ao criar cliente. Tente novamente.')
     } finally {
+      console.log('🔍 finally - isCreatingClient setado para false')
       setIsCreatingClient(false)
     }
   }
