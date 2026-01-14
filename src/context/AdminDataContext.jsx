@@ -1,6 +1,14 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-
-import { getAdminData, setAdminData, diagnoseStorage } from '../utils/enhancedDb.js'
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react'
+import { 
+  getClients, 
+  getProjects, 
+  createClient, 
+  createProject,
+  updateClient as updateClientFirebase,
+  updateProject as updateProjectFirebase,
+  deleteClient as deleteClientFirebase,
+  deleteProject as deleteProjectFirebase
+} from '../firebase/services'
 
 const AdminDataContext = createContext(null)
 
@@ -13,70 +21,125 @@ const seedData = {
 export function AdminDataProvider({ children }) {
   const [clients, setClients] = useState([])
   const [projects, setProjects] = useState([])
-  const [isHydrated, setIsHydrated] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    let cancelled = false
-
-    const hydrate = async () => {
-      try {
-        // Carregar dados usando sistema robusto
-        const data = await getAdminData()
-        
-        if (cancelled) return
-        
-        if (data && data.clients && data.projects) {
-          setClients(data.clients)
-          setProjects(data.projects)
-          setIsHydrated(true)
-          console.log('✅ Dados carregados com sucesso:', {
-            clients: data.clients.length,
-            projects: data.projects.length
-          })
-        } else {
-          console.error('❌ Falha ao carregar dados')
-        }
-      } catch (error) {
-        console.error('❌ Erro crítico na hidratação:', error)
-        
-        // Fallback para dados iniciais
-        setClients(seedData.clients)
-        setProjects(seedData.projects)
-        setIsHydrated(true)
-      }
-    }
-
-    hydrate()
-
-    // Diagnóstico do armazenamento
-    diagnoseStorage()
-
-    return () => {
-      cancelled = true
-    }
+    loadData()
   }, [])
 
-  // Auto-salvamento robusto
-  useEffect(() => {
-    if (!isHydrated) return
-    
-    const saveData = async () => {
-      try {
-        const success = await setAdminData({ clients, projects })
-        if (success) {
-          console.log('✅ Dados salvos automaticamente')
-        } else {
-          console.warn('⚠️ Falha ao salvar dados automaticamente')
-        }
-      } catch (error) {
-        console.error('❌ Erro ao salvar dados:', error)
-      }
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const [clientsData, projectsData] = await Promise.all([
+        getClients(),
+        getProjects()
+      ])
+      setClients(clientsData)
+      setProjects(projectsData)
+      console.log('✅ Dados carregados do Firebase:', {
+        clients: clientsData.length,
+        projects: projectsData.length
+      })
+    } catch (error) {
+      console.error('❌ Erro ao carregar dados do Firebase:', error)
+      setError(error.message)
+      // Fallback para dados iniciais
+      setClients(seedData.clients)
+      setProjects(seedData.projects)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    // Debounce para não sobrecarregar
-    const timeoutId = setTimeout(saveData, 500)
-    return () => clearTimeout(timeoutId)
-  }, [clients, projects, isHydrated])
+  const addClient = async (clientData) => {
+    try {
+      setError(null)
+      const docId = await createClient(clientData)
+      const newClient = { id: docId, ...clientData }
+      setClients(prev => [...prev, newClient])
+      console.log('✅ Cliente criado no Firebase:', newClient)
+      return newClient
+    } catch (error) {
+      console.error('❌ Erro ao criar cliente no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
+
+  const updateClientData = async (id, clientData) => {
+    try {
+      setError(null)
+      await updateClientFirebase(id, clientData)
+      setClients(prev => prev.map(client => 
+        client.id === id ? { ...client, ...clientData } : client
+      ))
+      console.log('✅ Cliente atualizado no Firebase:', id, clientData)
+    } catch (error) {
+      console.error('❌ Erro ao atualizar cliente no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
+
+  const deleteClient = async (id) => {
+    try {
+      setError(null)
+      await deleteClientFirebase(id)
+      setClients(prev => prev.filter(client => client.id !== id))
+      // Também remove projetos associados
+      setProjects(prev => prev.filter(project => project.clientId !== id))
+      console.log('✅ Cliente excluído do Firebase:', id)
+    } catch (error) {
+      console.error('❌ Erro ao excluir cliente no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
+
+  const addProject = async (projectData) => {
+    try {
+      setError(null)
+      const docId = await createProject(projectData)
+      const newProject = { id: docId, ...projectData }
+      setProjects(prev => [...prev, newProject])
+      console.log('✅ Projeto criado no Firebase:', newProject)
+      return newProject
+    } catch (error) {
+      console.error('❌ Erro ao criar projeto no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
+
+  const updateProjectData = async (id, projectData) => {
+    try {
+      setError(null)
+      await updateProjectFirebase(id, projectData)
+      setProjects(prev => prev.map(project => 
+        project.id === id ? { ...project, ...projectData } : project
+      ))
+      console.log('✅ Projeto atualizado no Firebase:', id, projectData)
+    } catch (error) {
+      console.error('❌ Erro ao atualizar projeto no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
+
+  const deleteProject = async (id) => {
+    try {
+      setError(null)
+      await deleteProjectFirebase(id)
+      setProjects(prev => prev.filter(project => project.id !== id))
+      console.log('✅ Projeto excluído do Firebase:', id)
+    } catch (error) {
+      console.error('❌ Erro ao excluir projeto no Firebase:', error)
+      setError(error.message)
+      throw error
+    }
+  }
 
   const clientsById = useMemo(() => {
     const map = new Map()
@@ -87,40 +150,10 @@ export function AdminDataProvider({ children }) {
   const projectsEnriched = useMemo(() => {
     return projects.map((p) => ({
       ...p,
-      clientName: clientsById.get(p.clientId)?.name || ''
+      // Manter o clientName original se existir, senão tentar buscar pelo clientId
+      clientName: p.clientName || clientsById.get(p.clientId)?.name || ''
     }))
   }, [projects, clientsById])
-
-  const addClient = (client) => {
-    setClients((prev) => {
-      const nextId = prev.length ? Math.max(...prev.map((c) => c.id)) + 1 : 1
-      return [...prev, { id: nextId, ...client }]
-    })
-  }
-
-  const updateClient = (clientId, patch) => {
-    setClients((prev) => prev.map((c) => (c.id === clientId ? { ...c, ...patch } : c)))
-  }
-
-  const deleteClient = (clientId) => {
-    setClients((prev) => prev.filter((c) => c.id !== clientId))
-    setProjects((prev) => prev.filter((p) => p.clientId !== clientId))
-  }
-
-  const addProject = (project) => {
-    setProjects((prev) => {
-      const nextId = prev.length ? Math.max(...prev.map((p) => p.id)) + 1 : 1
-      return [...prev, { id: nextId, notes: '', history: [], ...project }]
-    })
-  }
-
-  const updateProject = (projectId, patch) => {
-    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, ...patch } : p)))
-  }
-
-  const deleteProject = (projectId) => {
-    setProjects((prev) => prev.filter((p) => p.id !== projectId))
-  }
 
   const addProjectHistory = (projectId, entry) => {
     setProjects((prev) =>
@@ -145,20 +178,21 @@ export function AdminDataProvider({ children }) {
   const value = {
     clients,
     projects: projectsEnriched,
+    loading,
+    error,
     setClients,
     setProjects,
     addClient,
-    updateClient,
+    updateClient: updateClientData,
     deleteClient,
     addProject,
-    updateProject,
+    updateProject: updateProjectData,
     deleteProject,
-    addProjectHistory,
-    isHydrated // Expor status de hidratação
+    addProjectHistory
   }
 
   // Mostrar indicador de carregamento enquanto dados não estão prontos
-  if (!isHydrated) {
+  if (loading) {
     return (
       <div style={{
         position: 'fixed',
@@ -176,10 +210,53 @@ export function AdminDataProvider({ children }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ marginBottom: '10px' }}>🔄</div>
-          <div>Carregando dados...</div>
+          <div>Carregando dados do Firebase...</div>
           <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '5px' }}>
             Aguarde um momento
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Mostrar erro se houver
+  if (error) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(220, 53, 69, 0.9)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        color: '#ffffff',
+        fontSize: '16px'
+      }}>
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <div style={{ marginBottom: '10px' }}>❌</div>
+          <div>Erro ao carregar dados</div>
+          <div style={{ fontSize: '14px', opacity: 0.8, marginTop: '5px' }}>
+            {error}
+          </div>
+          <button 
+            onClick={loadData}
+            style={{
+              marginTop: '15px',
+              padding: '10px 20px',
+              background: '#ffffff',
+              color: '#dc3545',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Tentar novamente
+          </button>
         </div>
       </div>
     )

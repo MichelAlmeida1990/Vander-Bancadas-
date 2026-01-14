@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Plus, Edit, Trash2, CheckCircle, Clock, DollarSign, User, Calendar, Download, FileText } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { Plus, User, CheckCircle, Clock, Download, FileText, Edit, Trash2, X, DollarSign, Calendar } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
-import './ProjectsClean.css'
+import '../styles/modal-projeto.css'
+import '../styles/projects-page.css'
 import '../styles/admin-footer.css'
 import '../styles/categories.css'
 import { useAdminData } from '../context/AdminDataContext.jsx'
@@ -54,7 +55,7 @@ function ProjectsSimple() {
     cnpj: '38.022.318/0001-46',
     address: 'São Paulo, SP',
     phone: '(11) 97167-8867',
-    email: 'contato@vanderbancadas.com.br',
+    email: 'Vander1988@hotmail.com',
     instagram: '@vander_bancadas'
   }
 
@@ -70,7 +71,16 @@ function ProjectsSimple() {
     endDate: '',
     clientName: '', 
     clientEmail: '', 
-    clientPhone: ''
+    clientPhone: '',
+    // Campos dinâmicos para categorias
+    categories: {
+      cozinha: { checked: false, observation: '', value: '' },
+      banheiro: { checked: false, observation: '', value: '' },
+      area_gourmet: { checked: false, observation: '', value: '' },
+      nicho: { checked: false, observation: '', value: '' },
+      prateleira: { checked: false, observation: '', value: '' },
+      bancada: { checked: false, observation: '', value: '' }
+    }
   })
 
   const showFeedback = (message) => {
@@ -78,6 +88,54 @@ function ProjectsSimple() {
     setTimeout(() => {
       setFeedback('')
     }, 2500)
+  }
+
+  // Função para calcular valor total das categorias
+  const calculateTotalValue = (categories) => {
+    const total = Object.values(categories || formData.categories)
+      .filter(cat => cat.checked)
+      .reduce((sum, cat) => sum + parseFloat(cat.value || 0), 0)
+    return total.toFixed(2)
+  }
+
+  // Função para atualizar categoria
+  const updateCategory = (categoryName, field, value) => {
+    setFormData(prev => {
+      const updatedCategories = {
+        ...prev.categories,
+        [categoryName]: {
+          ...prev.categories[categoryName],
+          [field]: value
+        }
+      }
+      
+      // Atualizar array de categorias marcadas
+      const checkedCategories = Object.entries(updatedCategories)
+        .filter(([_, cat]) => cat.checked)
+        .map(([name, _]) => {
+          const categoryNames = {
+            cozinha: 'Cozinha',
+            banheiro: 'Banheiro',
+            area_gourmet: 'Área Gourmet',
+            nicho: 'Nicho',
+            prateleira: 'Prateleira',
+            bancada: 'Bancada'
+          }
+          return categoryNames[name]
+        })
+      
+      // Calcular valor total com as categorias atualizadas
+      const totalValue = Object.values(updatedCategories)
+        .filter(cat => cat.checked)
+        .reduce((sum, cat) => sum + parseFloat(cat.value || 0), 0)
+      
+      return {
+        ...prev,
+        categories: updatedCategories,
+        category: checkedCategories,
+        value: totalValue.toFixed(2)
+      }
+    })
   }
 
   useEffect(() => {
@@ -95,6 +153,20 @@ function ProjectsSimple() {
       setShowNewClient(false)
     }
   }, [location.search, showNewClient, showNewProject])
+
+  // Atualizar valor total quando as categorias mudam
+  useEffect(() => {
+    const totalValue = Object.values(formData.categories)
+      .filter(cat => cat.checked)
+      .reduce((sum, cat) => sum + parseFloat(cat.value || 0), 0)
+    
+    if (totalValue !== parseFloat(formData.value)) {
+      setFormData(prev => ({
+        ...prev,
+        value: totalValue.toFixed(2)
+      }))
+    }
+  }, [formData.categories])
 
   const openClientModal = () => {
     setShowNewClient(true)
@@ -120,7 +192,10 @@ function ProjectsSimple() {
       return
     }
 
-    const selectedClient = clients.find(c => c.id === parseInt(formData.clientId))
+    // Melhorar a busca do cliente - tentar como número e como string
+    const selectedClient = clients.find(c => 
+      c.id === parseInt(formData.clientId) || c.id === formData.clientId
+    )
 
     addProject({
       name: formData.name,
@@ -131,7 +206,8 @@ function ProjectsSimple() {
       startDate: formData.startDate,
       endDate: formData.endDate,
       status: 'pending',
-      paid: false
+      paid: false,
+      categories: formData.categories // Salvar categorias detalhadas
     })
     
     setShowNewProject(false)
@@ -139,13 +215,21 @@ function ProjectsSimple() {
     setFormData({ 
       name: '', 
       clientId: '', 
-      category: '', 
+      category: [], 
       value: '', 
       startDate: '', 
       endDate: '',
       clientName: '', 
       clientEmail: '', 
-      clientPhone: ''
+      clientPhone: '',
+      categories: {
+        cozinha: { checked: false, observation: '', value: '' },
+        banheiro: { checked: false, observation: '', value: '' },
+        area_gourmet: { checked: false, observation: '', value: '' },
+        nicho: { checked: false, observation: '', value: '' },
+        prateleira: { checked: false, observation: '', value: '' },
+        bancada: { checked: false, observation: '', value: '' }
+      }
     })
   }
 
@@ -229,6 +313,7 @@ function ProjectsSimple() {
           <h1 style="color: #D4A574; margin: 15px 0 0 0; font-size: 32px; font-weight: 700; letter-spacing: 1px;">VANDER BANCADAS</h1>
           <p style="margin: 8px 0; color: #666; font-size: 16px; font-weight: 500;">Especialistas em Bancadas de Porcelanato, Lâminas Sinterizadas e Quartzo</p>
           <p style="margin: 5px 0; color: #888; font-size: 13px;">WhatsApp: (11) 97167-8867 | Instagram: @vander_bancadas</p>
+          <p style="margin: 5px 0; color: #888; font-size: 13px;">Email: Vander1988@hotmail.com</p>
           <p style="margin: 5px 0; color: #888; font-size: 13px;">Atendimento em toda a Grande São Paulo</p>
         </div>
         
@@ -244,12 +329,60 @@ function ProjectsSimple() {
         </div>
         
         <div style="margin-bottom: 35px;">
+          <h3 style="color: #333; margin-bottom: 15px; font-size: 20px; border-left: 4px solid #D4A574; padding-left: 15px;">DETALHES DAS CATEGORIAS</h3>
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            ${project.categories ? Object.entries(project.categories)
+              .filter(([_, cat]) => cat.checked)
+              .map(([key, cat]) => {
+                const categoryNames = {
+                  cozinha: 'Cozinha',
+                  banheiro: 'Banheiro',
+                  area_gourmet: 'Área Gourmet',
+                  nicho: 'Nicho',
+                  prateleira: 'Prateleira',
+                  bancada: 'Bancada'
+                }
+                return `
+                  <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                    <h4 style="color: #D4A574; margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${categoryNames[key]}</h4>
+                    ${cat.observation ? `<p style="margin: 5px 0; font-size: 14px; color: #666;"><strong>Observação:</strong> ${cat.observation}</p>` : ''}
+                    <p style="margin: 5px 0; font-size: 14px; color: #333;"><strong>Valor:</strong> <span style="color: #D4A574; font-weight: 600;">R$ ${parseFloat(cat.value || 0).toLocaleString('pt-BR')}</span></p>
+                  </div>
+                `
+              }).join('') : '<p style="color: #666; font-style: italic;">Nenhuma categoria detalhada</p>'}
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 35px;">
           <h3 style="color: #333; margin-bottom: 15px; font-size: 20px; border-left: 4px solid #D4A574; padding-left: 15px;">DETALHES FINANCEIROS</h3>
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <span style="font-size: 16px; color: #333;"><strong>Valor do Projeto:</strong></span>
+              <span style="font-size: 16px; color: #333;"><strong>Valor Total do Projeto:</strong></span>
               <span style="font-size: 20px; font-weight: 700; color: #D4A574;">R$ ${(project.value || 0).toLocaleString('pt-BR')}</span>
             </div>
+            ${project.categories ? `
+              <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 10px;">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; color: #666; font-weight: 600;">RESUMO POR CATEGORIA:</h5>
+                ${Object.entries(project.categories)
+                  .filter(([_, cat]) => cat.checked)
+                  .map(([key, cat]) => {
+                    const categoryNames = {
+                      cozinha: 'Cozinha',
+                      banheiro: 'Banheiro',
+                      area_gourmet: 'Área Gourmet',
+                      nicho: 'Nicho',
+                      prateleira: 'Prateleira',
+                      bancada: 'Bancada'
+                    }
+                    return `
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px;">
+                        <span style="color: #666;">${categoryNames[key]}:</span>
+                        <span style="color: #333; font-weight: 500;">R$ ${parseFloat(cat.value || 0).toLocaleString('pt-BR')}</span>
+                      </div>
+                    `
+                  }).join('')}
+              </div>
+            ` : ''}
           </div>
         </div>
         
@@ -389,86 +522,109 @@ function ProjectsSimple() {
         padding: 40px;
         background: white;
         font-family: Arial, sans-serif;
-        color: #333;
-        line-height: 1.4;
       `
       
+      // Gerar HTML das categorias com observações
+      const categoriesHTML = contractData.categories ? 
+        Object.entries(contractData.categories)
+          .filter(([_, cat]) => cat.checked)
+          .map(([key, cat]) => {
+            const categoryNames = {
+              cozinha: 'Cozinha',
+              banheiro: 'Banheiro',
+              area_gourmet: 'Área Gourmet',
+              nicho: 'Nicho',
+              prateleira: 'Prateleira',
+              bancada: 'Bancada'
+            }
+            return `
+              <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #dee2e6;">
+                <p style="margin: 0 0 5px 0; font-weight: 600; color: #D4A574;">${categoryNames[key]}</p>
+                ${cat.observation ? `<p style="margin: 5px 0; font-size: 14px; color: #666;"><strong>Observações:</strong> ${cat.observation}</p>` : ''}
+                <p style="margin: 5px 0; font-size: 14px; color: #333;"><strong>Valor:</strong> R$ ${parseFloat(cat.value || 0).toLocaleString('pt-BR')}</p>
+              </div>
+            `
+          }).join('') : ''
+      
       contractElement.innerHTML = `
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #D4A574; padding-bottom: 20px;">
-          <h1 style="color: #D4A574; margin: 0; font-size: 28px;">CONTRATO DE PRESTAÇÃO DE SERVIÇOS</h1>
-          <h2 style="color: #666; margin: 10px 0; font-size: 20px;">Vander Bancadas</h2>
-          <p style="margin: 5px 0; color: #666; font-size: 14px;">CNPJ: ${companyData.cnpj}</p>
-          <p style="margin: 5px 0; color: #666; font-size: 12px;">${companyData.address} | ${companyData.phone} | ${companyData.email}</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">DAS PARTES</h3>
-          <p style="margin: 10px 0;"><strong>CONTRATADO:</strong> ${companyData.name}, empresa inscrita no CNPJ nº ${companyData.cnpj}, com sede em ${companyData.address}.</p>
-          <p style="margin: 10px 0;"><strong>CONTRATANTE:</strong> ${contractData.clientName}, portador(a) do CPF nº ${contractData.clientCpf || '[Informar]'}, RG nº ${contractData.clientRg || '[Informar]'}, residente e domiciliado(a) à ${contractData.clientAddress || '[Informar]'}.</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA PRIMEIRA – DO OBJETO</h3>
-          <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em porcelanato e lâminas sinterizadas, quartzo e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
-          <p style="margin: 10px 0;"><strong>Descrição:</strong> ${contractData.projectDescription || 'Instalação de bancadas conforme projeto aprovado.'}</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEGUNDA – DO VALOR E CONDIÇÕES DE PAGAMENTO</h3>
-          <p style="margin: 10px 0;"><strong>Valor Total:</strong> R$ ${parseFloat(contractData.projectValue).toLocaleString('pt-BR')}</p>
-          <p style="margin: 10px 0;"><strong>Forma de Pagamento:</strong> ${contractData.paymentMethod || 'A definir'}</p>
-          <p style="margin: 10px 0;"><strong>Condições:</strong> ${contractData.paymentTerms || '50% de sinal e 50% na entrega'}</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA TERCEIRA – DO PRAZO DE EXECUÇÃO</h3>
-          <p style="margin: 10px 0;"><strong>Início Previsto:</strong> ${contractData.installationDate || 'A definir'}</p>
-          <p style="margin: 10px 0;">O prazo de entrega varia entre 20 a 30 dias corridos, contados a partir do pagamento do sinal.</p>
-          <p style="margin: 10px 0;">Trabalhamos com acabamento em massa base epóxi, oferecendo melhor acabamento e maior resistência mecânica contra impactos e desplacamento.</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUARTA – DAS OBRIGAÇÕES DO CONTRATADO</h3>
-          <p style="margin: 10px 0;">I. Fornecer materiais de qualidade conforme especificações acordadas;</p>
-          <p style="margin: 10px 0;">II. Executar os serviços com profissionalismo e nos prazos estabelecidos;</p>
-          <p style="margin: 10px 0;">III. Oferecer garantia de 2 anos contra defeitos de fabricação e instalação;</p>
-          <p style="margin: 10px 0;">IV. Responsabilizar-se por quebras durante transporte e instalação.</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUINTA – DAS OBRIGAÇÕES DO CONTRATANTE</h3>
-          <p style="margin: 10px 0;">I. Garantir acesso ao local dos trabalhos;</p>
-          <p style="margin: 10px 0;">II. Efetuar os pagamentos nos prazos estipulados;</p>
-          <p style="margin: 10px 0;">III. Fornecer medidas corretas e projetos atualizados;</p>
-          <p style="margin: 10px 0;">IV. Responsabilizar-se por itens fornecidos pelo cliente (cubas, torneiras).</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEXTA – CONDIÇÕES COMERCIAIS</h3>
-          <p style="margin: 10px 0;">• Orçamento válido por 2 meses;</p>
-          <p style="margin: 10px 0;">• 5% de desconto para pagamento em PIX ou dinheiro;</p>
-          <p style="margin: 10px 0;">• Parcelamento em até 6x sem juros no cartão;</p>
-          <p style="margin: 10px 0;">• Sinal obrigatório de 50% (pode ser parcelado).</p>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-          <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SÉTIMA – DA GARANTIA</h3>
-          <p style="margin: 10px 0;">O CONTRATADO oferece garantia de 2 (dois) anos contra defeitos de instalação, não cobrindo danos por uso inadequado, quedas ou impactos acidentais.</p>
-        </div>
-        
-        <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid #D4A574;">
-          <div style="display: flex; justify-content: space-between;">
-            <div style="text-align: center; width: 45%;">
-              <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${companyData.name}</p>
-              <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATADO</p>
-            </div>
-            <div style="text-align: center; width: 45%;">
-              <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${contractData.clientName}</p>
-              <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATANTE</p>
+        <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #D4A574; margin: 0; font-size: 28px; border-bottom: 3px solid #D4A574; padding-bottom: 10px;">CONTRATO DE PRESTAÇÃO DE SERVIÇOS</h1>
+            <p style="margin: 10px 0; color: #666; font-size: 14px;">Vander Bancadas - CNPJ: ${companyData.cnpj}</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">DAS PARTES</h3>
+            <p style="margin: 10px 0;"><strong>CONTRATADO:</strong> ${companyData.name}, empresa inscrita no CNPJ nº ${companyData.cnpj}, com sede em ${companyData.address}.</p>
+            <p style="margin: 10px 0;"><strong>CONTRATANTE:</strong> ${contractData.clientName}, portador(a) do CPF nº ${contractData.clientCpf || '[Informar]'}, RG nº ${contractData.clientRg || '[Informar]'}, residente e domiciliado(a) à ${contractData.clientAddress || '[Informar]'}.</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA PRIMEIRA – DO OBJETO</h3>
+            <p style="margin: 10px 0;">O presente contrato tem como objeto a prestação de serviços de fornecimento e instalação de bancadas em porcelanato e lâminas sinterizadas, quartzo e similares, conforme especificações do projeto <strong>"${contractData.projectName}"</strong>.</p>
+            <p style="margin: 10px 0;"><strong>Descrição:</strong> ${contractData.projectDescription || 'Instalação de bancadas conforme projeto aprovado.'}</p>
+            
+            ${categoriesHTML ? `
+              <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #D4A574;">
+                <h4 style="margin: 0 0 15px 0; font-size: 16px; color: #333;">ESPECIFICAÇÕES DETALHADAS:</h4>
+                ${categoriesHTML}
+              </div>
+            ` : ''}
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEGUNDA – DO VALOR E CONDIÇÕES DE PAGAMENTO</h3>
+            <p style="margin: 10px 0;"><strong>Valor Total:</strong> R$ ${parseFloat(contractData.projectValue).toLocaleString('pt-BR')}</p>
+            <p style="margin: 10px 0;"><strong>Forma de Pagamento:</strong> ${contractData.paymentMethod || 'A definir'}</p>
+            <p style="margin: 10px 0;"><strong>Condições:</strong> ${contractData.paymentTerms || '50% de sinal e 50% na entrega'}</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA TERCEIRA – DO PRAZO DE EXECUÇÃO</h3>
+            <p style="margin: 10px 0;"><strong>Início Previsto:</strong> ${contractData.installationDate || 'A definir'}</p>
+            <p style="margin: 10px 0;">O prazo de entrega varia entre 20 a 30 dias corridos, contados a partir do pagamento do sinal.</p>
+            <p style="margin: 10px 0;">Trabalhamos com acabamento em massa base epóxi, oferecendo melhor acabamento e maior resistência mecânica contra impactos e desplacamento.</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUARTA – DAS OBRIGAÇÕES DO CONTRATADO</h3>
+            <p style="margin: 10px 0;">I. Fornecer materiais de qualidade conforme especificações acordadas;</p>
+            <p style="margin: 10px 0;">II. Executar os serviços com profissionalismo e nos prazos estabelecidos;</p>
+            <p style="margin: 10px 0;">III. Oferecer garantia de 2 anos contra defeitos de fabricação e instalação;</p>
+            <p style="margin: 10px 0;">IV. Responsabilizar-se por quebras durante transporte e instalação.</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA QUINTA – DAS OBRIGAÇÕES DO CONTRATANTE</h3>
+            <p style="margin: 10px 0;">I. Efetuar o pagamento nas condições acordadas;</p>
+            <p style="margin: 10px 0;">II. Garantir acesso ao local da obra;</p>
+            <p style="margin: 10px 0;">III. Informar sobre qualquer irregularidade no local;</p>
+            <p style="margin: 10px 0;">IV. Disponibilizar ponto de água e energia elétrica.</p>
+          </div>
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SEXTA – DA RESCISÃO</h3>
+            <p style="margin: 10px 0;">O contrato poderá ser rescindido por:</p>
+            <p style="margin: 10px 0;">I. Mútuo acordo entre as partes;</p>
+            <p style="margin: 10px 0;">II. Inadimplência do contratante por mais de 30 dias;</p>
+            <p style="margin: 10px 0;">III. Descumprimento de quaisquer cláusulas contratuais.</p>
+          </div>
+          
+          <div style="margin-top: 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div style="text-align: center; width: 45%;">
+                <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${companyData.name}</p>
+                <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATADO</p>
+              </div>
+              <div style="text-align: center; width: 45%;">
+                <p style="margin: 0 0 60px 0; border-bottom: 1px solid #333; padding-bottom: 5px;">${contractData.clientName}</p>
+                <p style="margin: 5px 0; font-size: 12px; color: #666;">CONTRATANTE</p>
+              </div>
             </div>
           </div>
-          <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #666;">
-            <p>São Paulo, ${format(new Date(), 'dd/MM/yyyy', { locale: ptBR })}</p>
+          
+          <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #666;">
+            <p>${format(new Date(), 'dd/MM/yyyy', { locale: ptBR })} - São Paulo/SP</p>
           </div>
         </div>
       `
@@ -479,7 +635,8 @@ function ProjectsSimple() {
       const canvas = await html2canvas(contractElement, {
         scale: 2,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       })
       
       // Criar o PDF
@@ -535,30 +692,10 @@ function ProjectsSimple() {
   const pendingRevenue = projects.filter(p => !p.paid).reduce((sum, p) => sum + p.value, 0)
 
   return (
-    <div className="projects-page">
+    <div className="projects-simple">
       {feedback && (
-        <div style={{
-          position: 'fixed',
-          top: 16,
-          right: 16,
-          zIndex: 9999,
-          background: 'rgba(16, 185, 129, 0.18)',
-          color: '#fff',
-          padding: '12px 14px',
-          borderRadius: 10,
-          boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
-          border: '1px solid rgba(16, 185, 129, 0.45)',
-          maxWidth: 360,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          backdropFilter: 'blur(10px)'
-        }}>
+        <div className="feedback-message">
           <span style={{
-            width: 22,
-            height: 22,
-            borderRadius: 999,
-            background: 'rgba(16, 185, 129, 0.25)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -698,7 +835,8 @@ function ProjectsSimple() {
                           projectDescription: project.description || '',
                           installationDate: '',
                           paymentMethod: '',
-                          paymentTerms: ''
+                          paymentTerms: '',
+                          categories: project.categories || {} // Incluir categorias com observações
                         })
                         setShowContractModal(true)
                       }}
@@ -747,136 +885,300 @@ function ProjectsSimple() {
       {/* Modal Novo Projeto */}
       {showNewProject && (
         <div className="modal-overlay" onClick={() => setShowNewProject(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Novo Projeto</h2>
-            <div className="form">
-              <div className="form-row">
-                <input
-                  type="text"
-                  placeholder="Nome do projeto"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                />
-                <select
-                  value={formData.clientId}
-                  onChange={(e) => setFormData({...formData, clientId: e.target.value})}
-                >
-                  <option value="">Selecione o cliente</option>
-                  {clients.map(client => (
-                    <option key={client.id} value={client.id}>{client.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-row">
-                <div className="form-row" style={{flexDirection: 'column'}}>
-                  <label style={{marginBottom: '10px', fontWeight: 'bold', color: '#333'}}>Categorias (selecione uma ou mais):</label>
-                  <div style={{display: 'flex', flexWrap: 'wrap', gap: '15px'}}>
-                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        value="Nicho"
-                        checked={formData.category.includes('Nicho')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, category: [...formData.category, 'Nicho']})
-                          } else {
-                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Nicho')})
-                          }
-                        }}
-                      />
-                      <span style={{marginLeft: '5px'}}>Nicho</span>
-                    </label>
-                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        value="Prateleira"
-                        checked={formData.category.includes('Prateleira')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, category: [...formData.category, 'Prateleira']})
-                          } else {
-                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Prateleira')})
-                          }
-                        }}
-                      />
-                      <span style={{marginLeft: '5px'}}>Prateleira</span>
-                    </label>
-                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        value="Cozinha"
-                        checked={formData.category.includes('Cozinha')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, category: [...formData.category, 'Cozinha']})
-                          } else {
-                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Cozinha')})
-                          }
-                        }}
-                      />
-                      <span style={{marginLeft: '5px'}}>Cozinha</span>
-                    </label>
-                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        value="Banheiro"
-                        checked={formData.category.includes('Banheiro')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, category: [...formData.category, 'Banheiro']})
-                          } else {
-                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Banheiro')})
-                          }
-                        }}
-                      />
-                      <span style={{marginLeft: '5px'}}>Banheiro</span>
-                    </label>
-                    <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        value="Área Gourmet"
-                        checked={formData.category.includes('Área Gourmet')}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({...formData, category: [...formData.category, 'Área Gourmet']})
-                          } else {
-                            setFormData({...formData, category: formData.category.filter(cat => cat !== 'Área Gourmet')})
-                          }
-                        }}
-                      />
-                      <span style={{marginLeft: '5px'}}>Área Gourmet</span>
-                    </label>
+          <div className="modal-content modal-content-large" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Novo Projeto</h2>
+              <button className="modal-close-btn" onClick={() => setShowNewProject(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="form-section">
+                <h3 className="section-title">Informações Básicas</h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Nome do projeto *</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Cozinha Completa"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Cliente *</label>
+                    <select
+                      value={formData.clientId}
+                      onChange={(e) => setFormData({...formData, clientId: e.target.value})}
+                    >
+                      <option value="">Selecione o cliente</option>
+                      {clients.map(client => (
+                        <option key={client.id} value={client.id}>{client.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-                <input
-                  type="number"
-                  placeholder="Valor"
-                  value={formData.value}
-                  onChange={(e) => setFormData({...formData, value: e.target.value})}
-                />
               </div>
-              <div className="form-row">
-                <input
-                  type="date"
-                  placeholder="Data início"
-                  value={formData.startDate || ''}
-                  onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                  onFocus={(e) => e.target.showPicker()}
-                  onClick={(e) => e.target.showPicker()}
-                />
-                <input
-                  type="date"
-                  placeholder="Data término"
-                  value={formData.endDate || ''}
-                  onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                  onFocus={(e) => e.target.showPicker()}
-                  onClick={(e) => e.target.showPicker()}
-                />
+
+              <div className="form-section">
+                <h3 className="section-title">Categorias e Valores</h3>
+                
+                {/* Nicho */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.nicho.checked}
+                      onChange={(e) => updateCategory('nicho', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Nicho</span>
+                  </label>
+                  {formData.categories.nicho.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes do nicho"
+                            value={formData.categories.nicho.observation}
+                            onChange={(e) => updateCategory('nicho', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.nicho.value}
+                            onChange={(e) => updateCategory('nicho', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Prateleira */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.prateleira.checked}
+                      onChange={(e) => updateCategory('prateleira', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Prateleira</span>
+                  </label>
+                  {formData.categories.prateleira.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes da prateleira"
+                            value={formData.categories.prateleira.observation}
+                            onChange={(e) => updateCategory('prateleira', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.prateleira.value}
+                            onChange={(e) => updateCategory('prateleira', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bancada */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.bancada.checked}
+                      onChange={(e) => updateCategory('bancada', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Bancada</span>
+                  </label>
+                  {formData.categories.bancada.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes da bancada"
+                            value={formData.categories.bancada.observation}
+                            onChange={(e) => updateCategory('bancada', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.bancada.value}
+                            onChange={(e) => updateCategory('bancada', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Cozinha */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.cozinha.checked}
+                      onChange={(e) => updateCategory('cozinha', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Cozinha</span>
+                  </label>
+                  {formData.categories.cozinha.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes da cozinha"
+                            value={formData.categories.cozinha.observation}
+                            onChange={(e) => updateCategory('cozinha', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.cozinha.value}
+                            onChange={(e) => updateCategory('cozinha', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Banheiro */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.banheiro.checked}
+                      onChange={(e) => updateCategory('banheiro', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Banheiro</span>
+                  </label>
+                  {formData.categories.banheiro.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes do banheiro"
+                            value={formData.categories.banheiro.observation}
+                            onChange={(e) => updateCategory('banheiro', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.banheiro.value}
+                            onChange={(e) => updateCategory('banheiro', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Área Gourmet */}
+                <div className="category-card">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories.area_gourmet.checked}
+                      onChange={(e) => updateCategory('area_gourmet', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Área Gourmet</span>
+                  </label>
+                  {formData.categories.area_gourmet.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observação</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes da área gourmet"
+                            value={formData.categories.area_gourmet.observation}
+                            onChange={(e) => updateCategory('area_gourmet', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories.area_gourmet.value}
+                            onChange={(e) => updateCategory('area_gourmet', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Valor Total */}
+                <div className="total-card">
+                  <div className="total-content">
+                    <h4>Valor Total do Orçamento</h4>
+                    <div className="total-value">R$ {formData.value}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title">Datas do Projeto</h3>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Data de início</label>
+                    <input
+                      type="date"
+                      value={formData.startDate || ''}
+                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      onFocus={(e) => e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Data de término</label>
+                    <input
+                      type="date"
+                      value={formData.endDate || ''}
+                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                      onFocus={(e) => e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="modal-actions">
-              <button className="btn" onClick={() => setShowNewProject(false)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={handleNewProject}>Criar</button>
+            
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowNewProject(false)}>Cancelar</button>
+              <button className="btn btn-primary" onClick={handleNewProject}>Criar Projeto</button>
             </div>
           </div>
         </div>
