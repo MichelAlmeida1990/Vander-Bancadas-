@@ -1,0 +1,336 @@
+/* Modal Profissional - Novo Projeto */
+
+/* Modal principal maior */
+.modal-content-large {
+  max-width: 900px !important;
+  width: 95% !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Header do modal */
+.modal-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 20px 25px !important;
+  border-bottom: 2px solid #D4A574 !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.modal-header h2 {
+  margin: 0 !important;
+  color: #D4A574 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+}
+
+.modal-close-btn {
+  background: none !important;
+  border: none !important;
+  color: #666 !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+}
+
+.modal-close-btn:hover {
+  background: #dc3545 !important;
+  color: white !important;
+}
+
+/* Body do modal */
+.modal-body {
+  padding: 25px !important;
+  max-height: calc(90vh - 150px) !important;
+  overflow-y: auto !important;
+}
+
+/* Seções do formulário */
+.form-section {
+  margin-bottom: 30px !important;
+}
+
+.section-title {
+  color: #D4A574 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 2px solid #D4A574 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.section-title::before {
+  content: "📋" !important;
+  margin-right: 10px !important;
+  font-size: 20px !important;
+}
+
+/* Grupos de formulário */
+.form-group {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.form-group label {
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin-bottom: 8px !important;
+  font-size: 14px !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 15px !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+  background: white !important;
+  color: #333 !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none !important;
+  border-color: #D4A574 !important;
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1) !important;
+}
+
+/* Cards de categorias */
+.category-card {
+  background: white !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 10px !important;
+  margin-bottom: 15px !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+}
+
+.category-card:hover {
+  border-color: #D4A574 !important;
+  box-shadow: 0 5px 15px rgba(212, 165, 116, 0.1) !important;
+}
+
+.category-header {
+  display: flex !important;
+  align-items: center !important;
+  padding: 15px 20px !important;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.category-header:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
+}
+
+.category-header input[type="checkbox"] {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 12px !important;
+  cursor: pointer !important;
+}
+
+.category-title {
+  font-weight: 600 !important;
+  color: #333 !important;
+  font-size: 16px !important;
+}
+
+/* Detalhes das categorias */
+.category-details {
+  padding: 20px !important;
+  background: #f8f9fa !important;
+  border-top: 1px solid #e9ecef !important;
+}
+
+.category-details .form-group {
+  margin-bottom: 15px !important;
+}
+
+.category-details input,
+.category-details textarea {
+  pointer-events: auto !important;
+  user-select: text !important;
+  opacity: 1 !important;
+}
+
+/* Garantir que todos os inputs no modal sejam editáveis */
+.modal-content-large input,
+.modal-content-large textarea,
+.modal-content-large select {
+  pointer-events: auto !important;
+  user-select: text !important;
+  opacity: 1 !important;
+  color: #333 !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Estilo específico para os campos de observação */
+.category-details input[type="text"],
+.category-details input[type="number"],
+.category-details textarea {
+  pointer-events: auto !important;
+  user-select: text !important;
+  opacity: 1 !important;
+  color: #333 !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* Forçar edição dos campos de observação */
+input[placeholder*="Detalhes"] {
+  pointer-events: auto !important;
+  user-select: text !important;
+  opacity: 1 !important;
+  color: #333 !important;
+  cursor: text !important;
+}
+
+/* Card de total */
+.total-card {
+  background: linear-gradient(135deg, #D4A574 0%, #c4955f 100%) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 25px !important;
+  margin-top: 20px !important;
+  text-align: center !important;
+  box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3) !important;
+}
+
+.total-content h4 {
+  margin: 0 0 10px 0 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  opacity: 0.9 !important;
+}
+
+.total-value {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  color: #000000 !important;
+}
+
+/* Footer do modal */
+.modal-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 15px !important;
+  padding: 20px 25px !important;
+  border-top: 2px solid #e9ecef !important;
+  background: #f8f9fa !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* Botões do modal */
+.btn-secondary {
+  background: #6c757d !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 25px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-secondary:hover {
+  background: #5a6268 !important;
+  transform: translateY(-2px) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #D4A574 0%, #c4955f 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 25px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3) !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4) !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-content-large {
+    width: 98% !important;
+    max-height: 95vh !important;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 15px !important;
+  }
+  
+  .form-row {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+  
+  .category-details .form-row {
+    flex-direction: column !important;
+  }
+  
+  .total-value {
+    font-size: 24px !important;
+  }
+}
+
+/* Animações */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content-large {
+  animation: slideIn 0.3s ease-out !important;
+}
+
+/* Scrollbar personalizada */
+.modal-body::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 10px !important;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #D4A574 !important;
+  border-radius: 10px !important;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #c4955f !important;
+}
