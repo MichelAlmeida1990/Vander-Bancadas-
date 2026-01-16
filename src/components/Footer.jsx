@@ -47,6 +47,7 @@ function Footer() {
               </li>
             </ul>
             <p className="footer-location">Atendemos toda Grande São Paulo</p>
+            <p className="footer-cnpj">CNPJ: 38.022.318/0001-46</p>
           </div>
         </div>
 

@@ -516,7 +516,7 @@ function ProjectsSimple() {
             </div>
             <div>
               <p style="margin: 0; color: #333; font-weight: 600; font-size: 14px;">CNPJ</p>
-              <p style="margin: 0; color: #D4A574; font-size: 13px;">XX.XXX.XXX/0001-XX</p>
+              <p style="margin: 0; color: #D4A574; font-size: 13px;">38.022.318/0001-46</p>
             </div>
           </div>
         </div>

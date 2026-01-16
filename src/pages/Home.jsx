@@ -444,6 +444,10 @@ function Home() {
                 </a>
               </div>
               <div className="info-item">
+                <strong>CNPJ</strong>
+                <p>38.022.318/0001-46</p>
+              </div>
+              <div className="info-item">
                 <strong>Localização</strong>
                 <p>Atendemos toda Grande São Paulo</p>
               </div>
