@@ -79,7 +79,8 @@ function ProjectsSimple() {
       area_gourmet: { checked: false, observation: '', value: '' },
       nicho: { checked: false, observation: '', value: '' },
       prateleira: { checked: false, observation: '', value: '' },
-      bancada: { checked: false, observation: '', value: '' }
+      bancada: { checked: false, observation: '', value: '' },
+      lavanderia: { checked: false, observation: '', value: '' }
     }
   })
 
@@ -122,7 +123,8 @@ function ProjectsSimple() {
             area_gourmet: 'Área Gourmet',
             nicho: 'Nicho',
             prateleira: 'Prateleira',
-            bancada: 'Bancada'
+            bancada: 'Bancada',
+            lavanderia: 'Lavanderia'
           }
           return categoryNames[name]
         })
@@ -188,6 +190,32 @@ function ProjectsSimple() {
     setShowNewProject(true)
   }
 
+  const openEditModal = (project) => {
+    setFormData({
+      id: project.id,
+      name: project.name || '',
+      clientId: project.clientId || '',
+      category: project.category || [],
+      value: project.value || '',
+      startDate: project.startDate || '',
+      endDate: project.endDate || '',
+      description: project.description || '',
+      clientName: project.clientName || '',
+      clientEmail: project.clientEmail || '',
+      clientPhone: project.clientPhone || '',
+      categories: project.categories || {
+        cozinha: { checked: false, observation: '', value: '' },
+        banheiro: { checked: false, observation: '', value: '' },
+        area_gourmet: { checked: false, observation: '', value: '' },
+        nicho: { checked: false, observation: '', value: '' },
+        prateleira: { checked: false, observation: '', value: '' },
+        bancada: { checked: false, observation: '', value: '' },
+        lavanderia: { checked: false, observation: '', value: '' }
+      }
+    })
+    setShowNewProject(true)
+  }
+
   const closeClientModal = () => {
     setShowNewClient(false)
   }
@@ -204,31 +232,52 @@ function ProjectsSimple() {
 
     // Melhorar a busca do cliente - tentar como número e como string
     const selectedClient = clients.find(c => 
-      c.id === parseInt(formData.clientId) || c.id === formData.clientId
+      c.id === formData.clientId || 
+      c.id.toString() === formData.clientId.toString() ||
+      c.name === formData.clientId
     )
 
-    addProject({
+    if (!selectedClient) {
+      alert('Cliente não encontrado. Selecione um cliente válido.')
+      return
+    }
+
+    const projectData = {
       name: formData.name,
-      clientId: parseInt(formData.clientId),
-      clientName: selectedClient?.name || 'Cliente não encontrado',
+      clientId: selectedClient.id,
+      clientName: selectedClient.name,
+      clientEmail: selectedClient.email,
+      clientPhone: selectedClient.phone,
       category: formData.category,
-      value: parseFloat(formData.value),
+      value: formData.value,
       startDate: formData.startDate,
       endDate: formData.endDate,
+      description: formData.description,
+      categories: formData.categories,
+      createdAt: new Date().toISOString(),
       status: 'pending',
-      paid: false,
-      categories: formData.categories // Salvar categorias detalhadas
-    })
-    
-    setShowNewProject(false)
-    showFeedback('Projeto cadastrado com sucesso!')
+      paid: false
+    }
+
+    if (formData.id) {
+      // Editando projeto existente
+      updateProject(formData.id, projectData)
+      showFeedback('Projeto atualizado com sucesso!')
+    } else {
+      // Criando novo projeto
+      addProject(projectData)
+      showFeedback('Projeto criado com sucesso!')
+    }
+
+    // Limpa o formulário e fecha o modal
     setFormData({ 
       name: '', 
       clientId: '', 
-      category: [], 
+      category: '', 
       value: '', 
       startDate: '', 
       endDate: '',
+      description: '',
       clientName: '', 
       clientEmail: '', 
       clientPhone: '',
@@ -238,9 +287,11 @@ function ProjectsSimple() {
         area_gourmet: { checked: false, observation: '', value: '' },
         nicho: { checked: false, observation: '', value: '' },
         prateleira: { checked: false, observation: '', value: '' },
-        bancada: { checked: false, observation: '', value: '' }
+        bancada: { checked: false, observation: '', value: '' },
+        lavanderia: { checked: false, observation: '', value: '' }
       }
     })
+    setShowNewProject(false)
   }
 
   const handleNewClient = async () => {
@@ -902,7 +953,7 @@ function ProjectsSimple() {
         <div className="modal-overlay" onClick={() => setShowNewProject(false)}>
           <div className="modal-content modal-content-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Novo Projeto</h2>
+              <h2>{formData.id ? 'Editar Projeto' : 'Novo Projeto'}</h2>
               <button className="modal-close-btn" onClick={() => setShowNewProject(false)}>
                 <X size={20} />
               </button>
@@ -1155,6 +1206,42 @@ function ProjectsSimple() {
                   )}
                 </div>
 
+                {/* Lavanderia */}
+                <div className="category-item">
+                  <label className="category-header">
+                    <input
+                      type="checkbox"
+                      checked={formData.categories?.lavanderia?.checked || false}
+                      onChange={(e) => updateCategory('lavanderia', 'checked', e.target.checked)}
+                    />
+                    <span className="category-title">Lavanderia</span>
+                  </label>
+                  {formData.categories?.lavanderia?.checked && (
+                    <div className="category-details">
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Observações</label>
+                          <input
+                            type="text"
+                            placeholder="Detalhes da lavanderia"
+                            value={formData.categories?.lavanderia?.observation || ''}
+                            onChange={(e) => updateCategory('lavanderia', 'observation', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Valor (R$)</label>
+                          <input
+                            type="number"
+                            placeholder="0,00"
+                            value={formData.categories?.lavanderia?.value || ''}
+                            onChange={(e) => updateCategory('lavanderia', 'value', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Valor Total */}
                 <div className="total-card">
                   <div className="total-content">
@@ -1193,7 +1280,7 @@ function ProjectsSimple() {
             
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setShowNewProject(false)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={handleNewProject}>Criar Projeto</button>
+              <button className="btn btn-primary" onClick={handleNewProject}>{formData.id ? 'Salvar Alterações' : 'Criar Projeto'}</button>
             </div>
           </div>
         </div>

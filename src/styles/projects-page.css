@@ -256,20 +256,32 @@
   transform: translateY(-2px);
 }
 
+.pdf-btn {
+  background: #007bff;
+  color: white;
+}
+
 .pdf-btn:hover {
   background: #0056b3;
+}
+
+.contract-btn {
+  background: #28a745;
+  color: white;
 }
 
 .contract-btn:hover {
   background: #218838;
 }
 
-.edit-btn:hover {
+.edit-btn {
   background: #ffc107;
+  color: white;
 }
 
-.delete-btn:hover {
+.delete-btn {
   background: #dc3545;
+  color: white;
 }
 
 /* Footer */
