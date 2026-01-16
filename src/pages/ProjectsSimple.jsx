@@ -471,9 +471,9 @@ function ProjectsSimple() {
           </div>
           <div style="background: #e8f5e8; padding: 25px; border-radius: 12px; border: 3px solid #4caf50; margin-top: 20px;">
             <h3 style="color: #2e7d32; margin-bottom: 15px; font-size: 20px; font-weight: bold;">🔓 CONDIÇÃO ESPECIAL</h3>
-            <p style="margin: 8px 0; font-size: 18px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
-            <p style="margin: 8px 0; font-size: 15px;">Sinal pode ser parcelado em até 2x</p>
-            <p style="margin: 8px 0; font-size: 15px;">Prazo de instalação contado a partir do pagamento do sinal</p>
+            <p style="margin: 8px 0; font-size: 16px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
+            <p style="margin: 5px 0; font-size: 14px;">Sinal pode ser parcelado</p>
+            <p style="margin: 5px 0; font-size: 14px;">Prazo de instalação contado a partir do pagamento do sinal</p>
           </div>
           <div style="margin-top: 20px; padding: 18px; background: #fff3cd; border-radius: 12px; border: 2px solid #ffc107;">
             <p style="margin: 8px 0; font-size: 15px; font-weight: bold; color: #856404;">📅 Validade: Orçamento válido por 2 meses</p>
@@ -663,8 +663,8 @@ function ProjectsSimple() {
               </div>
               <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; margin-top: 15px;">
                 <h3 style="color: #2e7d32; margin-bottom: 10px; font-size: 16px; font-weight: bold;">🔓 CONDIÇÃO ESPECIAL</h3>
-                <p style="margin: 5px 0; font-size: 14px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
-                <p style="margin: 5px 0; font-size: 12px;">Sinal pode ser parcelado em até 2x</p>
+                <p style="margin: 8px 0; font-size: 14px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
+                <p style="margin: 5px 0; font-size: 12px;">Sinal pode ser parcelado</p>
                 <p style="margin: 5px 0; font-size: 12px;">Prazo de instalação contado a partir do pagamento do sinal</p>
               </div>
             </div>
