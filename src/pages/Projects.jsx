@@ -132,6 +132,7 @@ const Projects = () => {
       startDate: formData.startDate,
       estimatedEndDate: formData.estimatedEndDate,
       actualEndDate: null,
+      description: formData.description || '', // Garante que nunca seja undefined
       status: 'pending',
       phases: projectPhases.map(phase => ({
         ...phase,
@@ -386,6 +387,32 @@ const Projects = () => {
         </div>
         
         <div style="margin-bottom: 30px;">
+          <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 30px; border-radius: 15px; border: 3px solid #ffc107; text-align: center;">
+            <h2 style="color: #f57c00; margin-bottom: 20px; font-size: 22px; font-weight: bold;">💰 FORMAS DE PAGAMENTO</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">💳</div>
+                <h3 style="color: #4caf50; margin-bottom: 10px; font-size: 16px; font-weight: bold;">PIX E DINHEIRO</h3>
+                <p style="margin: 5px 0; font-size: 14px; font-weight: bold; color: #2e7d32;">5% DE DESCONTO!</p>
+                <p style="margin: 5px 0; font-size: 12px;">Economia imediata no valor total</p>
+              </div>
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #2196f3; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">💳</div>
+                <h3 style="color: #2196f3; margin-bottom: 10px; font-size: 16px; font-weight: bold;">CARTÃO DE CRÉDITO</h3>
+                <p style="margin: 5px 0; font-size: 14px; font-weight: bold; color: #1565c0;">ATÉ 6X SEM JUROS</p>
+                <p style="margin: 5px 0; font-size: 12px;">Parcelamento facilitado</p>
+              </div>
+            </div>
+            <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; margin-top: 15px;">
+              <h3 style="color: #2e7d32; margin-bottom: 10px; font-size: 16px; font-weight: bold;">🔓 CONDIÇÃO ESPECIAL</h3>
+              <p style="margin: 5px 0; font-size: 14px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
+              <p style="margin: 5px 0; font-size: 12px;">Sinal pode ser parcelado em até 2x</p>
+              <p style="margin: 5px 0; font-size: 12px;">Prazo de instalação contado a partir do pagamento do sinal</p>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
           <h3 style="color: #333; margin-bottom: 10px;">CLÁUSULA SÉTIMA – DA GARANTIA</h3>
           <p style="margin: 10px 0;">O CONTRATADO oferece garantia de 2 (dois) anos contra defeitos de instalação, não cobrindo danos por uso inadequado, quedas ou impactos acidentais.</p>
         </div>
@@ -522,32 +549,55 @@ const Projects = () => {
         ` : ''}
         
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-          <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #D4A574; margin-bottom: 20px;">
-            <h3 style="color: #333; margin-bottom: 15px; font-size: 16px; text-align: center;">⚠️ CONDIÇÕES COMERCIAIS IMPORTANTES</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;">
-              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
-                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">📅 Validade</strong>
-                Orçamento válido por 2 meses
+          <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 30px; border-radius: 15px; border: 3px solid #ffc107; margin-bottom: 20px; text-align: center;">
+            <h2 style="color: #f57c00; margin-bottom: 20px; font-size: 24px; font-weight: bold;">💰 FORMAS DE PAGAMENTO</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">💳</div>
+                <h3 style="color: #4caf50; margin-bottom: 10px; font-size: 18px; font-weight: bold;">PIX E DINHEIRO</h3>
+                <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2e7d32;">5% DE DESCONTO!</p>
+                <p style="margin: 5px 0; font-size: 14px;">Economia imediata</p>
               </div>
-              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
-                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">🚚 Prazo de Entrega</strong>
-                20 a 30 dias corridos
-              </div>
-              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
-                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">💳 Desconto PIX/Dinheiro</strong>
-                5% de desconto
-              </div>
-              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6;">
-                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">📦 Parcelamento</strong>
-                Até 6x sem juros
-              </div>
-              <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6; grid-column: span 2;">
-                <strong style="color: #D4A574; display: block; margin-bottom: 3px;">🔧 Sinal Obrigatório</strong>
-                50% de sinal (pode ser parcelado) - Prazo de instalação contado a partir do pagamento do sinal
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #2196f3; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">💳</div>
+                <h3 style="color: #2196f3; margin-bottom: 10px; font-size: 18px; font-weight: bold;">CARTÃO DE CRÉDITO</h3>
+                <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #1565c0;">ATÉ 6X SEM JUROS</p>
+                <p style="margin: 5px 0; font-size: 14px;">Parcelamento facilitado</p>
               </div>
             </div>
-            <div style="margin-top: 12px; padding: 10px; background: #fff3cd; border-radius: 6px; border-left: 3px solid #ffc107; font-size: 11px;">
-              <strong style="color: #856404;">⭐ ACABAMENTO PREMIUM:</strong> Trabalhamos com acabamento em massa base epóxi, oferecendo melhor acabamento e maior resistência mecânica contra impactos e desplacamento.
+            <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; margin-top: 15px;">
+              <h3 style="color: #2e7d32; margin-bottom: 10px; font-size: 18px; font-weight: bold;">🔓 CONDIÇÃO ESPECIAL</h3>
+              <p style="margin: 5px 0; font-size: 16px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
+              <p style="margin: 5px 0; font-size: 14px;">Sinal pode ser parcelado em até 2x</p>
+              <p style="margin: 5px 0; font-size: 14px;">Prazo de instalação contado a partir do pagamento do sinal</p>
+            </div>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); padding: 30px; border-radius: 15px; border: 3px solid #ffc107; margin-bottom: 20px; text-align: center;">
+            <h2 style="color: #f57c00; margin-bottom: 20px; font-size: 24px; font-weight: bold;">💰 FORMAS DE PAGAMENTO</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">�</div>
+                <h3 style="color: #4caf50; margin-bottom: 10px; font-size: 18px; font-weight: bold;">PIX E DINHEIRO</h3>
+                <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2e7d32;">5% DE DESCONTO!</p>
+                <p style="margin: 5px 0; font-size: 14px;">Economia imediata no valor total</p>
+              </div>
+              <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #2196f3; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; margin-bottom: 10px;">💳</div>
+                <h3 style="color: #2196f3; margin-bottom: 10px; font-size: 18px; font-weight: bold;">CARTÃO DE CRÉDITO</h3>
+                <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #1565c0;">ATÉ 6X SEM JUROS</p>
+                <p style="margin: 5px 0; font-size: 14px;">Parcelamento facilitado</p>
+              </div>
+            </div>
+            <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; border: 2px solid #4caf50; margin-top: 15px;">
+              <h3 style="color: #2e7d32; margin-bottom: 10px; font-size: 18px; font-weight: bold;">🔓 CONDIÇÃO ESPECIAL</h3>
+              <p style="margin: 5px 0; font-size: 16px; font-weight: bold;">50% DE SINAL OBRIGATÓRIO</p>
+              <p style="margin: 5px 0; font-size: 14px;">Sinal pode ser parcelado em até 2x</p>
+              <p style="margin: 5px 0; font-size: 14px;">Prazo de instalação contado a partir do pagamento do sinal</p>
+            </div>
+            <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 10px; border: 2px solid #ffc107;">
+              <p style="margin: 5px 0; font-size: 14px; font-weight: bold; color: #856404;">📅 Validade: Orçamento válido por 2 meses</p>
+              <p style="margin: 5px 0; font-size: 14px; font-weight: bold; color: #856404;">🚚 Prazo: 20 a 30 dias corridos para entrega</p>
             </div>
           </div>
           
@@ -1016,6 +1066,7 @@ const Projects = () => {
             boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
           }}>
             <h2>Gerar Contrato de Prestação de Serviços</h2>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
               <div className="form-group" style={{marginBottom: '15px'}}>
                 <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>Nome do Cliente*</label>
                 <input
